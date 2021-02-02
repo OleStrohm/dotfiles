@@ -29,6 +29,7 @@ Plug 'tpope/vim-sensible'
 Plug 'justinmk/vim-syntax-extra'
 Plug 'sheerun/vim-polyglot'
 Plug 'CaffeineViking/vim-glsl'
+Plug 'ap/vim-css-color'
 Plug 'voldikss/vim-floaterm'
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
