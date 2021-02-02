@@ -1,0 +1,6 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =4
+let g:netrw_dirhist_4='/home/ole/workspace/emulator/ppu'
+let g:netrw_dirhist_3='/home/ole/workspace/cpp/sandbox'
+let g:netrw_dirhist_2='/home/ole/workspace/rust/gba/src'
+let g:netrw_dirhist_1='/boot/loader'

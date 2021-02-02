@@ -1,0 +1,11 @@
+{
+	"clangd.semanticHighlighting": true,
+	"rust-analyzer.cargo.loadOutDirsFromCheck": true,
+	"rust-analyzer.procMacro.enable": true,
+	"languageserver": {
+		"svls": {
+			"command": "svls",
+			"filetypes": ["systemverilog"]
+		}
+	}
+}
