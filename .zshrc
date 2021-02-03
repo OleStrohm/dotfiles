@@ -21,6 +21,7 @@ plugins=(
 source $ZSH/oh-my-zsh.sh
 
 alias zshconfig="nvim ~/.zshrc"
+alias awesomerc="nvim ~/.config/awesome/rc.lua"
 alias x="startx"
 alias X="startx"
 alias vim="nvim"
