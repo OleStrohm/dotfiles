@@ -286,7 +286,7 @@ globalkeys = gears.table.join(
 
     -- Prompt
     awful.key({ modkey },            "space",     function ()
-	    awful.util.spawn("dmenu_run") end,
+	    awful.util.spawn("dmenu_run_history") end,
               {description = "launch dmenu", group = "launcher"}),
 
     -- Firefox
@@ -551,5 +551,6 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 beautiful.useless_gap = 5
 
 awful.spawn.with_shell("picom")
+awful.spawn.with_shell("redshift")
 
 -- }}}
