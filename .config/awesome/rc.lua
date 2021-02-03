@@ -480,7 +480,9 @@ awful.rules.rules = {
     },
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
-    { rule = { class = "Spotify" },
+    { rule = { class = "discord" },
+       properties = { screen = 1, tag = "4" } },
+    { rule = { class = "spotify" },
        properties = { screen = 1, tag = "9" } },
 }
 -- }}}
