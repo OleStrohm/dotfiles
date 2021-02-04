@@ -2,6 +2,7 @@
 	"clangd.semanticHighlighting": true,
 	"rust-analyzer.cargo.loadOutDirsFromCheck": true,
 	"rust-analyzer.procMacro.enable": true,
+	"rust-analyzer.diagnostics.disabled": ["inactive-code"],
 	"languageserver": {
 		"svls": {
 			"command": "svls",
