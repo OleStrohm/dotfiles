@@ -33,3 +33,6 @@ alias exaa="exa -la --git"
 
 eval "$(zoxide init zsh)"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# DSD settings
+alias nios2_shell='~/programs/quartus/20.1/nios2eds/nios2_command_shell.sh'
