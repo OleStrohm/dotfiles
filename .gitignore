@@ -38,3 +38,4 @@
 .config/coc
 .config/nvim/plugged
 .config/Raspberry Pi/
+.config/Trolltech.conf
