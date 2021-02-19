@@ -22,6 +22,7 @@ source $ZSH/oh-my-zsh.sh
 
 alias zshconfig="nvim ~/.zshrc"
 alias awesomerc="nvim ~/.config/awesome/rc.lua"
+alias picomrc="nvim ~/.config/picom/picom.conf"
 alias x="startx"
 alias X="startx"
 alias vim="nvim"
@@ -30,9 +31,12 @@ alias p="pacman"
 alias sudo="sudo "
 alias exa="exa"
 alias exaa="exa -la --git"
+alias ls="exa"
 
 eval "$(zoxide init zsh)"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+source /usr/share/nvm/init-nvm.sh
 
 # DSD settings
 alias nios2_shell='~/programs/quartus/20.1/nios2eds/nios2_command_shell.sh'
