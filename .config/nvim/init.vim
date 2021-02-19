@@ -25,6 +25,10 @@ set updatetime=300
 " Plugins {{{
 call plug#begin('~/.config/nvim/plugged')
 
+Plug 'camspiers/animate.vim'
+Plug 'camspiers/lens.vim'
+let g:lens#animate = 0
+
 Plug 'tpope/vim-sensible'
 Plug 'justinmk/vim-syntax-extra'
 Plug 'sheerun/vim-polyglot'
@@ -147,7 +151,7 @@ set laststatus=2
 set autoindent
 set showmode
 set showcmd
-set number relativenumber
+set number
 set cursorline
 
 set hlsearch
