@@ -284,16 +284,6 @@ globalkeys = gears.table.join(
               end,
               {description = "restore minimized", group = "client"}),
 
-    -- Prompt
-    awful.key({ modkey },            "space",     function ()
-	    awful.util.spawn("dmenu_run_history") end,
-              {description = "launch dmenu", group = "launcher"}),
-
-    -- Firefox
-    awful.key({ modkey },            "b",     function ()
-	    awful.util.spawn("firefox") end,
-              {description = "open firefox", group = "launcher"}),
-
     awful.key({ modkey }, "x",
               function ()
                   awful.prompt.run {
@@ -308,6 +298,22 @@ globalkeys = gears.table.join(
     awful.key({ modkey }, "p", function() menubar.show() end,
               {description = "show the menubar", group = "launcher"}),
 
+    -- Prompt
+    awful.key({ modkey },            "space",     function ()
+	    awful.util.spawn("dmenu_run_history") end,
+              {description = "launch dmenu", group = "launcher"}),
+
+    -- Firefox
+    awful.key({ modkey },            "b",     function ()
+	    awful.util.spawn("firefox") end,
+              {description = "open firefox", group = "launcher"}),
+
+    -- Screenshot
+    awful.key({ modkey, "Shift" },            "s",     function ()
+			awful.util.spawn("screenshot")
+		end,
+		{description = "Take screenshot", group = "awesome"}),
+
     -- fullscreen layout
     awful.key({ modkey,           }, "f",
 	function ()
@@ -317,8 +323,8 @@ globalkeys = gears.table.join(
 	    else
 	        awful.layout.set(awful.layout.suit.max)
 	    end
-        end,
-        {description = "toggle fullscreen", group = "layout"})
+	end,
+	{description = "toggle fullscreen", group = "layout"})
 )
 
 clientkeys = gears.table.join(
@@ -356,7 +362,27 @@ clientkeys = gears.table.join(
             c.maximized_horizontal = not c.maximized_horizontal
             c:raise()
         end ,
-        {description = "(un)maximize horizontally", group = "client"})
+        {description = "(un)maximize horizontally", group = "client"}),
+
+	-- media keys
+    awful.key({ },            "XF86AudioRaiseVolume",     function ()
+			awful.util.spawn("pactl set-sink-volume 0 +5%")
+		end, {}),
+    awful.key({ },            "XF86AudioLowerVolume",     function ()
+			awful.util.spawn("pactl set-sink-volume 0 -5%")
+		end, {}),
+    awful.key({ },            "XF86AudioMute",     function ()
+			awful.util.spawn("pactl set-sink-mute 0 toggle")
+		end, {}),
+    awful.key({ },            "XF86AudioPlay",     function ()
+			awful.util.spawn("playerctl --player=spotify play-pause")
+		end, {}),
+    awful.key({ },            "XF86AudioPrev",     function ()
+			awful.util.spawn("playerctl --player=spotify previous")
+		end, {}),
+    awful.key({ },            "XF86AudioNext",     function ()
+			awful.util.spawn("playerctl --player=spotify next")
+		end, {})
 )
 
 -- Bind all key numbers to tags.
@@ -373,7 +399,7 @@ for i = 1, 9 do
                            tag:view_only()
                         end
                   end,
-                  {description = "view tag #"..i, group = "tag"}),
+                  {}),
         -- Toggle tag display.
         awful.key({ modkey, "Control" }, "#" .. i + 9,
                   function ()
@@ -394,7 +420,7 @@ for i = 1, 9 do
                           end
                      end
                   end,
-                  {description = "move focused client to tag #"..i, group = "tag"}),
+                  {}),
         -- Toggle tag on focused client.
         awful.key({ modkey, "Control", "Shift" }, "#" .. i + 9,
                   function ()
@@ -415,6 +441,7 @@ clientbuttons = gears.table.join(
     end),
     awful.button({ modkey }, 1, function (c)
         c:emit_signal("request::activate", "mouse_click", {raise = true})
+		awful.client.floating.toggle()
         awful.mouse.client.move(c)
     end),
     awful.button({ modkey }, 3, function (c)
@@ -482,7 +509,7 @@ awful.rules.rules = {
     -- Set Firefox to always map on the tag named "2" on screen 1.
     { rule = { class = "discord" },
        properties = { screen = 1, tag = "4" } },
-    { rule = { class = "spotify" },
+    { rule = { class = "Spotify" },
        properties = { screen = 1, tag = "9" } },
 }
 -- }}}
@@ -552,7 +579,7 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 
 beautiful.useless_gap = 5
 
-awful.spawn.with_shell("picom")
-awful.spawn.with_shell("redshift")
+awful.spawn.once("picom")
+awful.spawn.with_shell("start_redshift")
 
 -- }}}

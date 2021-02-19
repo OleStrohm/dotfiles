@@ -1,0 +1,3 @@
+#!/bin/sh
+
+LD_PRELOAD=/home/ole/sources/spotifywm/spotifywm.so /usr/bin/spotify
