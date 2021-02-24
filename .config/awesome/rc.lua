@@ -441,10 +441,15 @@ clientbuttons = gears.table.join(
     end),
     awful.button({ modkey }, 1, function (c)
         c:emit_signal("request::activate", "mouse_click", {raise = true})
-		awful.client.floating.toggle()
+		if not awful.client.floating.get() then
+			awful.client.floating.toggle()
+		end
         awful.mouse.client.move(c)
     end),
     awful.button({ modkey }, 3, function (c)
+		if not awful.client.floating.get() then
+			awful.client.floating.toggle()
+		end
         c:emit_signal("request::activate", "mouse_click", {raise = true})
         awful.mouse.client.resize(c)
     end)
