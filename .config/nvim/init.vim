@@ -53,9 +53,10 @@ let g:NERDCompactSexyComs = 1
 let g:NERDDefaultAlign = 'left'
 
 Plug 'cespare/vim-toml'
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
 
 call plug#end()
-
 " }}}
 
 " coc.nvim {{{
@@ -97,7 +98,10 @@ nmap <leader>rn <Plug>(coc-rename)
 command! -nargs=0 Format :call CocAction('format')
 
 xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format)
+nmap <leader>f  <Plug>(coc-format-cursor)
+
+xmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>ac  :w<cr><Plug>(coc-codeaction-cursor)
 
 nmap <silent> <leader>qf  <Plug>(coc-fix-current)
 
@@ -117,18 +121,19 @@ nnoremap <silent> <space>sh :CocCommand clangd.switchSourceHeader<cr>
 nnoremap <silent> <space>ssh :split<cr>:CocCommand clangd.switchSourceHeader<cr>
 " }}}
 
-" floaterms {{{
+" Custom compilations {{{
 let g:floaterm_autoclose = 1
-augroup FLOATERMS
+augroup FLOATERM_COMPILATIONS
 	autocmd!
-	autocmd FileType fsharp nnoremap <silent> <leader>m :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=run dotnet run<cr>
-	autocmd FileType rust nnoremap <silent> <leader>m :FloatermNew --autoclose=1 --height=0.9 --width=0.9 --name=run cargo run<cr>
-	autocmd FileType rust nnoremap <silent> <leader>M :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=run cargo run<cr>
-	autocmd FileType rust nnoremap <silent> <leader>t :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=test cargo test<cr>
-	autocmd FileType cpp nnoremap <silent> <leader>m :FloatermNew --autoclose=1 --height=0.9 --width=0.9 --name=run make test<cr>
-	autocmd FileType cpp nnoremap <silent> <leader>M :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=run make test<cr>
+	autocmd FileType fsharp nnoremap <buffer> <silent> <leader>m :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=run dotnet run<cr>
+	autocmd FileType rust nnoremap <buffer> <silent> <leader>m :FloatermNew --autoclose=1 --height=0.9 --width=0.9 --name=run cargo run<cr>
+	autocmd FileType rust nnoremap <buffer> <silent> <leader>M :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=run cargo run<cr>
+	autocmd FileType rust nnoremap <buffer> <silent> <leader>t :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=test cargo test<cr>
+	autocmd FileType cpp nnoremap <buffer> <silent> <leader>m :FloatermNew --autoclose=1 --height=0.9 --width=0.9 --name=run make test<cr>
+	autocmd FileType cpp nnoremap <buffer> <silent> <leader>M :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=run make test<cr>
+	autocmd FileType arduino nnoremap <buffer> <silent> <leader>m :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=run arduino-cli compile --fqbn STM32:stm32:Nucleo_32:pnum=NUCLEO_L432KC starter && arduino-cli upload -p /dev/ttyACM0 --fqbn STM32:stm32:Nucleo_32:pnum=NUCLEO_L432KC,upload_method=swdMethod starter<cr>
+	autocmd FileType verilog nnoremap <buffer> <silent> <leader>m :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=test ./run_tb.sh<cr>
 augroup END
-
 " }}}
 
 nmap s <Plug>(easymotion-overwin-f2)
@@ -162,7 +167,7 @@ set smartcase
 set splitright splitbelow
 
 set ts=4
-set shiftwidth=4
+set tabstop=4 shiftwidth=4 expandtab
 
 colorscheme minimalist
 

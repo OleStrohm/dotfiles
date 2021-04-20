@@ -228,8 +228,6 @@ globalkeys = gears.table.join(
         end,
         {description = "focus previous by index", group = "client"}
     ),
-    awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
-              {description = "show main menu", group = "awesome"}),
 
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
@@ -447,9 +445,6 @@ clientbuttons = gears.table.join(
         awful.mouse.client.move(c)
     end),
     awful.button({ modkey }, 3, function (c)
-		if not awful.client.floating.get() then
-			awful.client.floating.toggle()
-		end
         c:emit_signal("request::activate", "mouse_click", {raise = true})
         awful.mouse.client.resize(c)
     end)

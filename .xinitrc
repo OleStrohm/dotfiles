@@ -26,4 +26,10 @@ fi
 
 setxkbmap -option "caps:super,numpad:microsoft"
 
-exec awesome
+session=${1:-awesome}
+
+case $session in
+	awesome ) exec awesome;;
+	plasma  ) exec startplasma-x11;;
+	*       ) exec awesome;;
+esac
