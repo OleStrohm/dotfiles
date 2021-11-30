@@ -1,146 +1,9 @@
-" Command Customization {{{
-let mapleader = ","
-let maplocalleader = "\\"
-
-nnoremap <silent> <leader>ev :sp $MYVIMRC<cr>
-nnoremap <silent> <leader>sv :source $MYVIMRC<cr>
-
-augroup filetype_vim
-	autocmd!
-	autocmd FileType vim setlocal foldmethod=marker
-augroup END
-
-augroup AUTOSAVE
-	autocmd!
-	autocmd InsertLeave *.rs ++nested write
-augroup END
-
-set exrc
-set secure
-
-set updatetime=300
-
-" }}}
-
-" Plugins {{{
-call plug#begin('~/.config/nvim/plugged')
-
-Plug 'camspiers/animate.vim'
-Plug 'camspiers/lens.vim'
-let g:lens#animate = 0
-
-Plug 'tpope/vim-sensible'
-Plug 'justinmk/vim-syntax-extra'
-Plug 'sheerun/vim-polyglot'
-Plug 'CaffeineViking/vim-glsl'
-Plug 'ap/vim-css-color'
-Plug 'voldikss/vim-floaterm'
-
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-nnoremap <leader>o :GFiles --exclude-standard --others --cached<cr>
-
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'jackguo380/vim-lsp-cxx-highlight'
-
-Plug 'itchyny/lightline.vim'
-Plug 'dikiaap/minimalist'
-
-Plug 'easymotion/vim-easymotion'
-Plug 'preservim/nerdcommenter'
-let g:NERDSpaceDelims = 1
-let g:NERDCompactSexyComs = 1
-let g:NERDDefaultAlign = 'left'
-
-Plug 'cespare/vim-toml'
-Plug 'godlygeek/tabular'
-Plug 'plasticboy/vim-markdown'
-
-call plug#end()
-" }}}
-
-" coc.nvim {{{
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-inoremap <silent><expr> <c-space> coc#refresh()
-
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-
-" Use K to show documentation in preview window.
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
-
-nmap <leader>rn <Plug>(coc-rename)
-
-command! -nargs=0 Format :call CocAction('format')
-
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-cursor)
-
-xmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>ac  :w<cr><Plug>(coc-codeaction-cursor)
-
-nmap <silent> <leader>qf  <Plug>(coc-fix-current)
-
-xmap if <Plug>(coc-funcobj-i)
-omap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap af <Plug>(coc-funcobj-a)
-xmap ic <Plug>(coc-classobj-i)
-omap ic <Plug>(coc-classobj-i)
-xmap ac <Plug>(coc-classobj-a)
-omap ac <Plug>(coc-classobj-a)
-
-nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
-nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
-
-nnoremap <silent> <space>sh :CocCommand clangd.switchSourceHeader<cr>
-nnoremap <silent> <space>ssh :split<cr>:CocCommand clangd.switchSourceHeader<cr>
-" }}}
-
-" Custom compilations {{{
-let g:floaterm_autoclose = 1
-augroup FLOATERM_COMPILATIONS
-	autocmd!
-	autocmd FileType fsharp nnoremap <buffer> <silent> <leader>m :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=run dotnet run<cr>
-	autocmd FileType rust nnoremap <buffer> <silent> <leader>m :FloatermNew --autoclose=1 --height=0.9 --width=0.9 --name=run cargo run<cr>
-	autocmd FileType rust nnoremap <buffer> <silent> <leader>M :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=run cargo run<cr>
-	autocmd FileType rust nnoremap <buffer> <silent> <leader>t :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=test cargo test<cr>
-	autocmd FileType cpp nnoremap <buffer> <silent> <leader>m :FloatermNew --autoclose=1 --height=0.9 --width=0.9 --name=run make test<cr>
-	autocmd FileType cpp nnoremap <buffer> <silent> <leader>M :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=run make test<cr>
-	autocmd FileType arduino nnoremap <buffer> <silent> <leader>m :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=run arduino-cli compile --fqbn STM32:stm32:Nucleo_32:pnum=NUCLEO_L432KC starter && arduino-cli upload -p /dev/ttyACM0 --fqbn STM32:stm32:Nucleo_32:pnum=NUCLEO_L432KC,upload_method=swdMethod starter<cr>
-	autocmd FileType verilog nnoremap <buffer> <silent> <leader>m :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=test ./run_tb.sh<cr>
-augroup END
-" }}}
-
-nmap s <Plug>(easymotion-overwin-f2)
 " Settings {{{
 set nocompatible
 
 set noshowmode
+set completeopt=menuone,noinsert,noselect
+set shortmess+=c
 
 syntax on
 filetype plugin indent on
@@ -169,48 +32,215 @@ set splitright splitbelow
 set ts=4
 set tabstop=4 shiftwidth=4 expandtab
 
-colorscheme minimalist
+set signcolumn=yes
 
-augroup fsharp_spaces
+" }}}
+
+" Command Customization {{{
+let mapleader = ","
+let maplocalleader = "\\"
+
+nnoremap <silent> <leader>ev :sp $MYVIMRC<cr>
+nnoremap <silent> <leader>sv :source $MYVIMRC<cr>
+
+augroup filetype_vim
 	autocmd!
-	autocmd FileType fsharp set expandtab
+	autocmd FileType vim setlocal foldmethod=marker
 augroup END
 
+augroup AUTOSAVE
+	autocmd!
+	autocmd InsertLeave *.rs ++nested write
+augroup END
+
+set exrc
+set secure
+
+set updatetime=300
+
 " }}}
 
-" Abbreviations {{{
-iabbrev flaot float
-iabbrev heigth height
+" Plugins {{{
+call plug#begin('~/.config/nvim/plugged')
+
+" nvim-lsp
+Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'neovim/nvim-lspconfig'
+Plug 'nvim-lua/lsp_extensions.nvim'
+
+" Completion
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+
+" Completion snippets
+Plug 'SirVer/ultisnips'
+Plug 'quangnguyen30192/cmp-nvim-ultisnips'
+
+" extra highlighting
+Plug 'tpope/vim-sensible'
+Plug 'justinmk/vim-syntax-extra'
+Plug 'sheerun/vim-polyglot'
+Plug 'CaffeineViking/vim-glsl'
+Plug 'ap/vim-css-color'
+Plug 'cespare/vim-toml'
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
+
+Plug 'voldikss/vim-floaterm'
+
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+nnoremap <leader>o :GFiles --exclude-standard --others --cached<cr>
+
+Plug 'itchyny/lightline.vim'
+Plug 'dikiaap/minimalist'
+
+" Don't really use it
+Plug 'easymotion/vim-easymotion'
+
+call plug#end()
+
+colorscheme minimalist
 " }}}
 
+" {{{ Plugin settings
+set completeopt=menu,menuone,noselect
+
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = { "lua", "rust" },
+  highlight = { enable = true, },
+  indent = { enable = true },
+}
+
+-- Set up nvim-cmp {{{
+local cmp = require'cmp'
+
+cmp.setup({
+  snippet = {
+    expand = function(args)
+      vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+    end,
+  },
+  mapping = {
+    ['<Tab>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
+    ['<S-Tab>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
+    ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+    ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+    ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+    ['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
+    ['<C-e>'] = cmp.mapping({
+      i = cmp.mapping.abort(),
+      c = cmp.mapping.close(),
+    }),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+  },
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+    { name = 'ultisnips' }, -- For ultisnips users.
+  }, {
+    { name = 'buffer' },
+  })
+})
+
+-- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline('/', {
+  sources = {
+    { name = 'buffer' }
+  }
+})
+
+-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline(':', {
+  sources = cmp.config.sources({
+    { name = 'path' }
+  }, {
+    { name = 'cmdline' }
+  })
+})
+-- }}}
+
+local nvim_lsp = require'lspconfig'
+
+local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+local on_attach = function(client, bufnr)
+-- lsp keymaps {{{
+	local function buf_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+	local opts = { noremap=true, silent=true }
+
+	buf_keymap('n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<cr>', opts)
+	buf_keymap('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+
+	buf_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
+	buf_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
+	buf_keymap('n', 'ga', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+	buf_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+	buf_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
+	buf_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
+	buf_keymap('n', '<space>o', '<cmd>lua vim.lsp.buf.document_symbol()<cr>', opts)
+
+	buf_keymap('n', 'g[', '<cmd>lua vim.lsp.diagnostic.goto_prev()<cr>', opts)
+	buf_keymap('n', 'g]', '<cmd>lua vim.lsp.diagnostic.goto_next()<cr>', opts)
+	buf_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
+-- }}}
+end
+
+nvim_lsp.rust_analyzer.setup({
+    on_attach=on_attach,
+    capabilities = capabilities,
+    settings = {
+        ["rust-analyzer"] = {
+            assist = {
+                importGranularity = "module",
+                importPrefix = "by_self",
+            },
+            cargo = {
+                loadOutDirsFromCheck = true
+            },
+            procMacro = {
+                enable = true
+            },
+        }
+    }
+})
+
+vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+  vim.lsp.diagnostic.on_publish_diagnostics, {
+    virtual_text = true,
+    signs = true,
+    update_in_insert = true,
+  }
+)
+EOF
+
+autocmd CursorMoved,InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost *
+            \ lua require'lsp_extensions'.inlay_hints{ prefix = '', highlight = "Comment", enabled = {"TypeHint", "ChainingHint", "ParameterHint"} }
+" }}}
+
+" Custom compilations {{{
+let g:floaterm_autoclose = 1
+augroup FLOATERM_COMPILATIONS
+	autocmd!
+	autocmd FileType fsharp nnoremap <buffer> <silent> <leader>m :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=run dotnet run<cr>
+	autocmd FileType rust nnoremap <buffer> <silent> <leader>m :FloatermNew --autoclose=1 --height=0.9 --width=0.9 --name=run cargo run<cr>
+	autocmd FileType rust nnoremap <buffer> <silent> <leader>M :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=run cargo run<cr>
+	autocmd FileType rust nnoremap <buffer> <silent> <leader>t :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=test cargo test<cr>
+	autocmd FileType cpp nnoremap <buffer> <silent> <leader>m :FloatermNew --autoclose=1 --height=0.9 --width=0.9 --name=run make test<cr>
+	autocmd FileType cpp nnoremap <buffer> <silent> <leader>M :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=run make test<cr>
+	autocmd FileType arduino nnoremap <buffer> <silent> <leader>m :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=run arduino-cli compile --fqbn STM32:stm32:Nucleo_32:pnum=NUCLEO_L432KC starter && arduino-cli upload -p /dev/ttyACM0 --fqbn STM32:stm32:Nucleo_32:pnum=NUCLEO_L432KC,upload_method=swdMethod starter<cr>
+	autocmd FileType verilog nnoremap <buffer> <silent> <leader>m :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=test ./run_tb.sh<cr>
+augroup END
+" }}}
+
+nmap s <Plug>(easymotion-overwin-f2)
 " Mappings {{{
 nnoremap <silent> <leader>w :write<cr>
 nnoremap Q @q
 
-nnoremap >i ddO
-
-onoremap p i(
-onoremap in( :<c-u>normal! f(vi(<cr>
-onoremap il( :<c-u>normal! F)vi(<cr>
-
-onoremap in" :<c-u>normal! f"vi"<cr>
-onoremap il" :<c-u>normal! F"vi"<cr>
-
-onoremap in' :<c-u>normal! f'vi'<cr>
-onoremap il' :<c-u>normal! F'vi'<cr>
- 
 nnoremap <silent> <leader>c :nohlsearch<cr>
-
-nnoremap - ddp
-nnoremap _ kddpk
-inoremap <C-d> <esc>ddi
-inoremap <C-u> <esc>lviwUi
-nnoremap <leader><C-u> viwU
-
-nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
-vnoremap <leader>" <esc>`>a"<esc>`<i"<esc>lv`>l
-
-inoremap jk <esc>
 
 " terminal
 nnoremap <leader>T :split<cr>:terminal<cr>i
@@ -236,8 +266,6 @@ nnoremap <M-h> <c-w>h
 nnoremap <M-j> <c-w>j
 nnoremap <M-k> <c-w>k
 nnoremap <M-l> <c-w>l
-
-nnoremap <leader>ui ounimplemented!();<esc>
 " }}}
 
 " Plugin dev {{{
@@ -313,5 +341,4 @@ endfunction
 " Custom commands {{{
 command! Test w | silent !./test.sh
 noremap <leader><F2> :Test<cr>
-
 " }}}

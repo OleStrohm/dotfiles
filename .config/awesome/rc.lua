@@ -84,7 +84,6 @@ awful.layout.layouts = {
 -- Create a launcher widget and a main menu
 myawesomemenu = {
    { "hotkeys", function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
-   { "manual", terminal .. " -e man awesome" },
    { "edit config", editor_cmd .. " " .. awesome.conffile },
    { "restart", awesome.restart },
    { "quit", function() awesome.quit() end },
@@ -298,7 +297,7 @@ globalkeys = gears.table.join(
 
     -- Prompt
     awful.key({ modkey },            "space",     function ()
-	    awful.util.spawn("dmenu_run_history") end,
+	    awful.util.spawn("/home/ole/dotfiles/bin/dmenu_run_history") end,
               {description = "launch dmenu", group = "launcher"}),
 
     -- Firefox
@@ -364,13 +363,13 @@ clientkeys = gears.table.join(
 
 	-- media keys
     awful.key({ },            "XF86AudioRaiseVolume",     function ()
-			awful.util.spawn("pactl set-sink-volume 0 +5%")
+			awful.util.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%")
 		end, {}),
     awful.key({ },            "XF86AudioLowerVolume",     function ()
-			awful.util.spawn("pactl set-sink-volume 0 -5%")
+			awful.util.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%")
 		end, {}),
     awful.key({ },            "XF86AudioMute",     function ()
-			awful.util.spawn("pactl set-sink-mute 0 toggle")
+			awful.util.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")
 		end, {}),
     awful.key({ },            "XF86AudioPlay",     function ()
 			awful.util.spawn("playerctl --player=spotify play-pause")
@@ -573,6 +572,9 @@ end)
 -- client.connect_signal("mouse::enter", function(c)
 --     c:emit_signal("request::activate", "mouse_enter", {raise = false})
 -- end)
+client.connect_signal("property::minimized", function(c)
+    c.minimized = false
+end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
@@ -580,6 +582,5 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 beautiful.useless_gap = 5
 
 awful.spawn.once("picom")
-awful.spawn.with_shell("start_redshift")
 
 -- }}}

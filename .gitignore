@@ -69,4 +69,8 @@
 .config/powermanagementprofilesrc
 .config/session/
 .config/xsettingsd/
-
+.config/Code - OSS/
+.config/Code/
+.config/kicad/
+.config/paru/
+.config/unity3d/
