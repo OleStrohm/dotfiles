@@ -581,6 +581,6 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 
 beautiful.useless_gap = 5
 
-awful.spawn.once("picom")
+awful.spawn.with_shell("~/.config/awesome/autorun.sh")
 
 -- }}}
