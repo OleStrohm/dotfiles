@@ -1,7 +1,4 @@
 vim.g.floaterm_autoclose = 1
-vim.cmd([[
-nmap s <Plug>(easymotion-overwin-f2)
-]])
 function nnoremap(shortcut, command)
     vim.api.nvim_set_keymap("n", shortcut, command, { noremap = true, silent = true })
 end

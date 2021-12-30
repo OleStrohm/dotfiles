@@ -73,7 +73,6 @@ local on_attach = function(client, bufnr)
 
 	buf_keymap('n', 'g[', '<cmd>lua vim.lsp.diagnostic.goto_prev()<cr>', opts)
 	buf_keymap('n', 'g]', '<cmd>lua vim.lsp.diagnostic.goto_next()<cr>', opts)
-	buf_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
 -- }}}
 end
 

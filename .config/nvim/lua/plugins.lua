@@ -35,9 +35,6 @@ nnoremap <leader>o :GFiles --exclude-standard --others --cached<cr>
 Plug 'itchyny/lightline.vim'
 Plug 'dikiaap/minimalist'
 
-" Don't really use it
-Plug 'easymotion/vim-easymotion'
-
 call plug#end()
 
 colorscheme minimalist

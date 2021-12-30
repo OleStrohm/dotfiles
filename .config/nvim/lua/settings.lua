@@ -30,21 +30,16 @@ vim.o.updatetime = 300
 vim.cmd([[
 syntax enable
 filetype plugin indent on
-
-augroup filetype_vim
-    autocmd!
-    autocmd FileType vim setlocal foldmethod=marker
-    autocmd FileType lua setlocal foldmethod=marker
-augroup END
 ]])
 -- }}}
 
-vim.g.mapleader = ","
+vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+vim.api.nvim_set_keymap('', "<space>", "<nop>", { noremap = true, silent = true })
 function nnoremap(shortcut, command)
     vim.api.nvim_set_keymap("n", shortcut, command, { noremap = true, silent = true })
 end
-nnoremap("<leader>ev", ":sp $MYVIMRC<cr>")
+nnoremap("<leader>ev", ":tabedit $MYVIMRC<cr>")
 nnoremap("<leader>sv", ":source $MYVIMRC<cr>")
 
