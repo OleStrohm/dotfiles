@@ -9,7 +9,6 @@ vim.o.laststatus = 2
 vim.o.autoindent = true
 vim.o.showmode = true
 vim.o.showcmd = true
-vim.o.number = true
 vim.o.cursorline = true
 vim.o.hlsearch = true
 vim.o.incsearch = true
@@ -21,12 +20,16 @@ vim.o.ts = 4
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4
 vim.o.expandtab = true
-vim.o.signcolumn = "yes"
+vim.o.signcolumn = "no"
 vim.o.completeopt="menu,menuone,noinsert,noselect"
 vim.o.shortmess=vim.o.shortmess .. "c"
 vim.o.exrc = true
 vim.o.secure = true
 vim.o.updatetime = 300
+vim.g.loaded_python_provider = 0
+vim.g.loaded_ruby_provider = 0
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_node_provider = 0
 vim.cmd([[
 syntax enable
 filetype plugin indent on

@@ -3,7 +3,7 @@ function nnoremap(shortcut, command)
     vim.api.nvim_set_keymap("n", shortcut, command, { noremap = true, silent = true })
 end
 function tnoremap(shortcut, command)
-    vim.api.nvim_set_keymap("n", shortcut, command, { noremap = true, silent = true })
+    vim.api.nvim_set_keymap("t", shortcut, command, { noremap = true, silent = true })
 end
 nnoremap("<leader>w", ":write<cr>")
 nnoremap("Q", "@q")
@@ -12,7 +12,6 @@ nnoremap("<leader>c", ":nohlsearch<cr>")
 
 -- terminal
 nnoremap("<leader>T", ":split<cr>:terminal<cr>i")
-tnoremap("<esc>", "<C-\\><C-n>")
 
 -- Movement
 tnoremap("<M-h>", "<c-\\><c-n><c-w>h")

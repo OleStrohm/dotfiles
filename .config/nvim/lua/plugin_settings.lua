@@ -54,25 +54,37 @@ cmp.setup.cmdline(':', {
 
 local nvim_lsp = require'lspconfig'
 
+function TSRCA()
+  local opts =  {}
+  opts.params = vim.lsp.util.make_given_range_params()
+  require('telescope.builtin').lsp_code_actions(opts)
+end
+
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 local on_attach = function(client, bufnr)
 -- lsp keymaps {{{
-	local function buf_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-	local opts = { noremap=true, silent=true }
+    function nnoremap(shortcut, command)
+        vim.api.nvim_buf_set_keymap(bufnr, "n", shortcut, command, { noremap = true, silent = true })
+    end
+    function vnoremap(shortcut, command)
+        vim.api.nvim_buf_set_keymap(bufnr, "v", shortcut, command, { noremap = true, silent = true })
+    end
 
-	buf_keymap('n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<cr>', opts)
-	buf_keymap('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+	nnoremap('<leader>f', '<cmd>lua vim.lsp.buf.formatting()<cr>')
+	nnoremap('<leader>rn', '<cmd>lua vim.lsp.buf.rename()<cr>')
 
-	buf_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
-	buf_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
-	buf_keymap('n', 'ga', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
-	buf_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
-	buf_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
-	buf_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
-	buf_keymap('n', '<space>o', '<cmd>lua vim.lsp.buf.document_symbol()<cr>', opts)
+	nnoremap('gd', '<cmd>lua vim.lsp.buf.definition()<cr>')
+	nnoremap('gD', '<cmd>lua vim.lsp.buf.declaration()<cr>')
+    nnoremap("ga", "<cmd>lua require('telescope.builtin').lsp_code_actions()<cr>")
+    -- vnoremap("ga", "<esc><cmd>'<,'>+1Telescope lsp_range_code_actions<cr>")
+    vnoremap("ga", "<esc><cmd>lua TSRCA()<cr>")
+	nnoremap('K', '<cmd>lua vim.lsp.buf.hover()<cr>')
+    nnoremap("gi", "<cmd>lua require('telescope.builtin').lsp_implementations()<cr>")
+    nnoremap("gr", "<cmd>lua require('telescope.builtin').lsp_references()<cr>")
+    nnoremap("<leader>o", "<cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>")
 
-	buf_keymap('n', 'g[', '<cmd>lua vim.lsp.diagnostic.goto_prev()<cr>', opts)
-	buf_keymap('n', 'g]', '<cmd>lua vim.lsp.diagnostic.goto_next()<cr>', opts)
+	nnoremap('g[', '<cmd>lua vim.lsp.diagnostic.goto_prev()<cr>')
+	nnoremap('g]', '<cmd>lua vim.lsp.diagnostic.goto_next()<cr>')
 -- }}}
 end
 
@@ -103,7 +115,51 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   }
 )
 
--- vim.cmd([[
--- autocmd CursorMoved,InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost *
---             \ lua require'lsp_extensions'.inlay_hints{ prefix = '', highlight = "Comment", enabled = {"TypeHint", "ChainingHint", "ParameterHint"} }
--- ]])
+require('telescope').setup{}
+function nnoremap(shortcut, command)
+    vim.api.nvim_set_keymap("n", shortcut, command, { noremap = true, silent = true })
+end
+nnoremap("<leader>ff", "<cmd>lua require('telescope.builtin').find_files()<cr>")
+nnoremap("<leader>p", "<cmd>lua require('telescope.builtin').git_files()<cr>")
+
+require('lualine').setup {
+    options = {
+        icons_enabled = true,
+        theme = 'auto',
+        component_separators = { left = '', right = ''},
+        section_separators = { left = '', right = ''},
+        disabled_filetypes = {},
+        always_divide_middle = false,
+    },
+    sections = {
+        lualine_a = {'mode'},
+        lualine_b = {
+            {
+                'diagnostics',
+                sources = { 'nvim_diagnostic' },
+                sections = { 'error', 'warn' },
+                symbols = {error = 'E', warn = 'W' }
+            }
+        },
+        lualine_c = {'filename'},
+        lualine_x = {},
+        lualine_y = {},
+        lualine_z = {'location'}
+    },
+    inactive_sections = {
+        lualine_a = {},
+        lualine_b = {},
+        lualine_c = {'filename'},
+        lualine_x = {'location'},
+        lualine_y = {},
+        lualine_z = {}
+    },
+    tabline = {},
+    extensions = {}
+}
+
+vim.cmd([[
+    colorscheme minimalist
+    " autocmd CursorMoved,InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost *
+    "             \ lua require'lsp_extensions'.inlay_hints{ prefix = '', highlight = "Comment", enabled = {"TypeHint", "ChainingHint", "ParameterHint"} }
+]])
