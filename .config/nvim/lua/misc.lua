@@ -7,6 +7,7 @@ function tnoremap(shortcut, command)
 end
 nnoremap("<leader>w", ":write<cr>")
 nnoremap("Q", "@q")
+nnoremap("<leader>vp", ":Telescope find_files search_dirs=$HOME/.config/nvim/<cr>")
 
 nnoremap("<leader>c", ":nohlsearch<cr>")
 

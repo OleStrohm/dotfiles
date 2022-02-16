@@ -1,10 +1,20 @@
+-- Tree sitter {{{
 require'nvim-treesitter.configs'.setup {
   ensure_installed = { "lua", "rust" },
   highlight = { enable = true, },
   indent = { enable = true },
 }
 
--- Set up nvim-cmp {{{
+require("filetype").setup({
+  overrides = {
+    extensions = {
+      scm = "query",
+    },
+  },
+})
+
+--- }}}
+-- Completion {{{
 local cmp = require'cmp'
 
 cmp.setup({
@@ -14,8 +24,9 @@ cmp.setup({
     end,
   },
   mapping = {
-    ['<Tab>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
-    ['<S-Tab>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
+    ['<Tab>'] = cmp.mapping.confirm({ select = true }),
+    ['<C-n>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
+    ['<C-p>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
     ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
     ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
     ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
@@ -24,7 +35,6 @@ cmp.setup({
       i = cmp.mapping.abort(),
       c = cmp.mapping.close(),
     }),
-    ['<CR>'] = cmp.mapping.confirm({ select = true }),
   },
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
@@ -50,15 +60,10 @@ cmp.setup.cmdline(':', {
     { name = 'cmdline' }
   })
 })
+
 -- }}}
-
+-- LSP {{{
 local nvim_lsp = require'lspconfig'
-
-function TSRCA()
-  local opts =  {}
-  opts.params = vim.lsp.util.make_given_range_params()
-  require('telescope.builtin').lsp_code_actions(opts)
-end
 
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 local on_attach = function(client, bufnr)
@@ -115,13 +120,22 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   }
 )
 
+--- }}}
+-- Telescope {{{
 require('telescope').setup{}
 function nnoremap(shortcut, command)
     vim.api.nvim_set_keymap("n", shortcut, command, { noremap = true, silent = true })
 end
-nnoremap("<leader>ff", "<cmd>lua require('telescope.builtin').find_files()<cr>")
 nnoremap("<leader>p", "<cmd>lua require('telescope.builtin').git_files()<cr>")
 
+function TSRCA()
+  local opts =  {}
+  opts.params = vim.lsp.util.make_given_range_params()
+  require('telescope.builtin').lsp_code_actions(opts)
+end
+
+--- }}}
+-- Lualine {{{
 require('lualine').setup {
     options = {
         icons_enabled = true,
@@ -158,8 +172,11 @@ require('lualine').setup {
     extensions = {}
 }
 
+--- }}}
+-- Colorscheme {{{
 vim.cmd([[
     colorscheme minimalist
     " autocmd CursorMoved,InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost *
     "             \ lua require'lsp_extensions'.inlay_hints{ prefix = '', highlight = "Comment", enabled = {"TypeHint", "ChainingHint", "ParameterHint"} }
 ]])
+--- }}}

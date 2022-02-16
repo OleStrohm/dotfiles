@@ -8,16 +8,21 @@ if status is-interactive
     zoxide init fish | source
 
     alias v "nvim"
+    alias vim "nvim"
+    alias fishrc "nvim ~/.config/fish/config.fish"
     alias awesomerc "nvim ~/.config/awesome/rc.lua"
     alias picomrc "nvim ~/.config/picom/picom.conf"
     alias x "startx"
     alias X "startx"
-    alias vim "nvim"
-    alias v "nvim"
     alias p "pacman"
-    alias exa "exa"
     alias exaa "exa -la --git"
+    alias exal "exa -l"
     if type -q exa
         alias ls "exa"
     end
+    alias gs "git status"
+    alias ga "git add"
+    alias gd "git diff"
+    alias gc "git commit"
+    alias gp "git push"
 end

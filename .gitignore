@@ -78,4 +78,5 @@
 .config/chromium/
 .config/zoomus.conf
 .config/tlpui/
+.config/tree-sitter/
 

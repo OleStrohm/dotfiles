@@ -1,5 +1,7 @@
 let g:termdebugger = "rust-gdb"
 
+highlight link TSVariable TSText
+
 let g:floaterm_autoclose = 1
 tnoremap <esc> <C-\><C-n>
 nnoremap <buffer> <silent> <leader>m :FloatermNew --autoclose=0 --height=0.9 --width=0.9 --name=run cargo run<cr>

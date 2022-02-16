@@ -1,6 +1,10 @@
-vim.keymap.set(vim.fn.bufnr(), "n", "gf", LuaGoto, { silent = true, noremap = true })
+vim.api.nvim_buf_set_keymap(vim.fn.bufnr(), "n", "gf", ":lua LuaGoto()<cr>", { silent = true, noremap = true })
 
+vim.opt_local.shiftwidth=2
 vim.opt_local.foldmethod="marker"
+vim.cmd[[
+  highlight link TSVariable TSText
+]]
 
 function LuaGoto()
     linenr = vim.fn.getcurpos()[2]
