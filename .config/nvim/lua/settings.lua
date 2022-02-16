@@ -9,6 +9,7 @@ vim.o.laststatus = 2
 vim.o.autoindent = true
 vim.o.showmode = true
 vim.o.showcmd = true
+vim.o.number = true
 vim.o.cursorline = true
 vim.o.hlsearch = true
 vim.o.incsearch = true
