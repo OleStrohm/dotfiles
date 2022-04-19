@@ -321,7 +321,14 @@ globalkeys = gears.table.join(
 	        awful.layout.set(awful.layout.suit.max)
 	    end
 	end,
-	{description = "toggle fullscreen", group = "layout"})
+	{description = "Toggle fullscreen", group = "layout"}),
+
+    -- Switch focused screen
+    awful.key({ modkey, "Shift" }, "o",
+	function ()
+        awful.screen.focus_relative(1)
+	end,
+	{description = "Focus other screen", group = "layout"})
 )
 
 clientkeys = gears.table.join(

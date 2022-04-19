@@ -1,3 +1,0 @@
-#!/bin/sh
-
-env MESA_LOADER_DRIVER_OVERRIDE=i965 /home/ole/MATLAB/R2021b/bin/matlab -desktop

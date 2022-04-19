@@ -1,13 +1,17 @@
 vim.g.floaterm_autoclose = 1
 function nnoremap(shortcut, command)
-    vim.api.nvim_set_keymap("n", shortcut, command, { noremap = true, silent = true })
+    vim.keymap.set("n", shortcut, command, { noremap = true, silent = true })
 end
 function tnoremap(shortcut, command)
-    vim.api.nvim_set_keymap("t", shortcut, command, { noremap = true, silent = true })
+    vim.keymap.set("t", shortcut, command, { noremap = true, silent = true })
 end
 nnoremap("<leader>w", ":write<cr>")
 nnoremap("Q", "@q")
 nnoremap("<leader>vp", ":Telescope find_files search_dirs=$HOME/.config/nvim/<cr>")
+nnoremap("<leader>vn", function()
+  local new_file = vim.fn.input(":new $HOME/.config/nvim/")
+  vim.cmd("new $HOME/.config/nvim/" .. new_file)
+end)
 
 nnoremap("<enter>", ":nohlsearch<cr>")
 
@@ -26,8 +30,8 @@ nnoremap("<M-j>", "<c-w>j")
 nnoremap("<M-k>", "<c-w>k")
 nnoremap("<M-l>", "<c-w>l")
 
--- local remove_highlight_on = { "h", "j", "k", "l", "i", "v", "V", "<C-v>" }
--- for i = 1,#(remove_highlight_on) do
---     local k = remove_highlight_on[i]
---     vim.api.nvim_set_keymap("n", k, ":nohl<cr>" .. k, { noremap = true, silent = true })
--- end
+-- Move tabs
+nnoremap("<left>", "gT")
+nnoremap("<right>", "gt")
+
+vim.cmd([[hi link helpCommand Type]])

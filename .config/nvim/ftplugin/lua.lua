@@ -1,12 +1,4 @@
-vim.api.nvim_buf_set_keymap(vim.fn.bufnr(), "n", "gf", ":lua LuaGoto()<cr>", { silent = true, noremap = true })
-
-vim.opt_local.shiftwidth=2
-vim.opt_local.foldmethod="marker"
-vim.cmd[[
-  highlight link TSVariable TSText
-]]
-
-function LuaGoto()
+local LuaGoto = function()
     linenr = vim.fn.getcurpos()[2]
     line = vim.fn.getline(linenr)
     if vim.startswith(line, "require('") and vim.endswith(line, "')") then
@@ -24,3 +16,12 @@ function LuaGoto()
         ]])
     end
 end
+
+vim.keymap.set("n", "gf", LuaGoto, { silent = true, noremap = true, buffer = 0, desc = "Go to file (and `require('file')`)" })
+vim.keymap.set("n", "<leader>rl", "<cmd>w<cr><cmd>luafile %<cr>", { silent = true, noremap = true, buffer = 0, desc = "Save and reload current lua file" })
+
+vim.opt_local.shiftwidth=2
+vim.opt_local.foldmethod="marker"
+vim.cmd[[
+  highlight link TSVariable TSText
+]]
