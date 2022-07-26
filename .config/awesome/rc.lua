@@ -102,7 +102,7 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- }}}
 
 -- Keyboard map indicator and switcher
--- mykeyboardlayout = awful.widget.keyboardlayout()
+batterypercentage = awful.widget.watch('bash -c "echo \\"$(cat /sys/class/power_supply/BAT0/capacity)$(cat /sys/class/power_supply/BAT0/status | sed -e \\"s/Discharging//\\" -e \\"s/^.\\+$/+/\\")%\\""', 60)
 
 -- {{{ Wibar
 -- Create a textclock widget
@@ -193,8 +193,8 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            mykeyboardlayout,
-            wibox.widget.systray(),
+            batterypercentage,
+            wibox.widget.textbox(' | '),
             mytextclock,
             s.mylayoutbox,
         },
@@ -329,6 +329,14 @@ globalkeys = gears.table.join(
         awful.screen.focus_relative(1)
 	end,
 	{description = "Focus other screen", group = "layout"})
+
+    -- backlight
+    awful.key({ }, "XF86MonBrightnessUp", function ()
+			awful.util.spawn("xbacklight -inc 5")
+		end, {}),
+    awful.key({ }, "XF86MonBrightnessDown", function ()
+			awful.util.spawn("xbacklight -dec 5")
+		end, {})
 )
 
 clientkeys = gears.table.join(
@@ -367,7 +375,7 @@ clientkeys = gears.table.join(
             c:raise()
         end ,
         {description = "(un)maximize horizontally", group = "client"}),
-
+	
 	-- media keys
     awful.key({ },            "XF86AudioRaiseVolume",     function ()
 			awful.util.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%")
@@ -582,6 +590,37 @@ end)
 client.connect_signal("property::minimized", function(c)
     c.minimized = false
 end)
+
+-- battery warning
+-- created by bpdp @ https://bpdp.blogspot.com/2013/06/battery-warning-notification-for.html
+
+local function trim(s)
+  return s:find'^%s*$' and '' or s:match'^%s*(.*%S)'
+end
+
+local function bat_notification()
+  local f_capacity = assert(io.open("/sys/class/power_supply/BAT0/capacity", "r"))
+  local f_status = assert(io.open("/sys/class/power_supply/BAT0/status", "r"))
+
+  local bat_capacity = tonumber(f_capacity:read("*all"))
+  local bat_status = trim(f_status:read("*all"))
+
+  if (bat_capacity <= 20 and bat_status == "Discharging") then
+    naughty.notify({ title      = "Battery Warning"
+      , text       = "Battery low! " .. bat_capacity .."%" .. " left!"
+      , fg="#ff0000"
+      , bg="#deb887"
+      , timeout    = 15
+      , position   = "bottom_left"
+    })
+  end
+end
+
+battimer = timer({timeout = 120})
+battimer:connect_signal("timeout", bat_notification)
+battimer:start()
+
+-- end here for battery warning
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
