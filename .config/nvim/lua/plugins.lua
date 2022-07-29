@@ -4,6 +4,7 @@ return require('packer').startup(function()
   use 'nvim-lua/plenary.nvim'
 
   use 'nvim-telescope/telescope.nvim'
+  use 'nvim-telescope/telescope-ui-select.nvim'
 
   use 'dstein64/vim-startuptime'
   use 'nathom/filetype.nvim'

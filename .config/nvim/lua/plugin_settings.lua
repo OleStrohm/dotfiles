@@ -86,7 +86,9 @@ local on_attach = function(client, bufnr)
       vim.keymap.set(mode, shortcut, command, { noremap = true, silent = true, desc = desc, buffer = 0 })
   end
 
-  map('n', '<leader>f', vim.lsp.buf.formatting, "Format file")
+  map('n', '<leader>f', function()
+      vim.lsp.buf.format { async = true}
+    end, "Format file")
   map('n', '<leader>rn', vim.lsp.buf.rename, "Rename symbol")
 
   map('n', 'gd', vim.lsp.buf.definition, "Go to the definition of symbol")
@@ -94,8 +96,7 @@ local on_attach = function(client, bufnr)
   map('n', 'gD', vim.lsp.buf.declaration, "Go to the declaration of symbol")
   map('n', "gi", require('telescope.builtin').lsp_implementations, "List the implementations of symbol")
   map('n', "gr", require('telescope.builtin').lsp_references, "List the references of symbol")
-  map('n', "ga", require('telescope.builtin').lsp_code_actions, "List code actions for the current location")
-  map('v', "ga", ":<c-u>lua TSRCA()<cr>", "List code actions for the current selection")
+  map('n', "ga", vim.lsp.buf.code_action, "List code actions for the current location")
 
   map('n', 'K', vim.lsp.buf.hover, "Show documentation of symbol")
   map('n', "<leader>o", require('telescope.builtin').lsp_document_symbols, "List all symbols in document")
@@ -257,11 +258,22 @@ require("dapui").setup({
 })
 -- }}}
 -- Telescope {{{
-require('telescope').setup{}
+-- This is your opts table
+require("telescope").setup {
+  extensions = {
+    ["ui-select"] = {
+      require("telescope.themes").get_dropdown {}
+    }
+  }
+}
+require("telescope").load_extension("ui-select")
+
 function nnoremap(shortcut, command)
     vim.api.nvim_set_keymap("n", shortcut, command, { noremap = true, silent = true })
 end
 nnoremap("<leader>p", "<cmd>lua require('telescope.builtin').git_files()<cr>")
+
+
 
 --- }}}
 -- Lualine {{{
