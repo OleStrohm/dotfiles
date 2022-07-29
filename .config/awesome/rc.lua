@@ -328,7 +328,7 @@ globalkeys = gears.table.join(
 	function ()
         awful.screen.focus_relative(1)
 	end,
-	{description = "Focus other screen", group = "layout"})
+	{description = "Focus other screen", group = "layout"}),
 
     -- backlight
     awful.key({ }, "XF86MonBrightnessUp", function ()
