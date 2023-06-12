@@ -2,8 +2,10 @@ return require('packer').startup(function()
   use 'wbthomason/packer.nvim'
 
   use 'nvim-lua/plenary.nvim'
+  use 'DrTom/fsharp-vim'
 
   use 'nvim-telescope/telescope.nvim'
+  use 'nvim-telescope/telescope-ui-select.nvim'
 
   use 'dstein64/vim-startuptime'
   use 'nathom/filetype.nvim'
@@ -33,7 +35,11 @@ return require('packer').startup(function()
   use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"} }
 
   use 'TimUntersberger/neogit'
+
+  use 'ggandor/lightspeed.nvim'
   
   use 'nvim-lualine/lualine.nvim'
   use 'dikiaap/minimalist'
+
+  use 'j-hui/fidget.nvim'
 end)

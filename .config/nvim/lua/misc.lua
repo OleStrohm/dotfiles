@@ -5,7 +5,7 @@ end
 function tnoremap(shortcut, command)
     vim.keymap.set("t", shortcut, command, { noremap = true, silent = true })
 end
-nnoremap("<leader>w", ":write<cr>")
+nnoremap("<leader>w", ":write!<cr>")
 nnoremap("Q", "@q")
 nnoremap("<leader>vp", ":Telescope find_files search_dirs=$HOME/.config/nvim/<cr>")
 nnoremap("<leader>vn", function()

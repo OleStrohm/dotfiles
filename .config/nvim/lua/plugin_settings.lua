@@ -1,18 +1,22 @@
 -- Tree sitter {{{
 require'nvim-treesitter.configs'.setup {
   ensure_installed = { "lua", "rust" },
-  highlight = { enable = true, },
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting = { "fsharp" },
+  },
   indent = { enable = true },
 }
-
+-- }}}
+-- Filetype {{{
 require("filetype").setup({
   overrides = {
     extensions = {
       scm = "query",
+      fs = "fsharp",
     },
   },
 })
-
 --- }}}
 -- Completion {{{
 local cmp = require'cmp'
@@ -47,6 +51,7 @@ cmp.setup({
 
 -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline('/', {
+  mapping = cmp.mapping.preset.cmdline(),
   sources = {
     { name = 'buffer' }
   }
@@ -54,6 +59,7 @@ cmp.setup.cmdline('/', {
 
 -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline(':', {
+  mapping = cmp.mapping.preset.cmdline(),
   sources = cmp.config.sources({
     { name = 'path' }
   }, {
@@ -79,14 +85,14 @@ function TSRCA()
   require('telescope.builtin').lsp_code_actions(opts)
 end
 
-local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
 local on_attach = function(client, bufnr)
   -- lsp keymaps {{{
-  function map(mode, shortcut, command, desc)
-      vim.keymap.set(mode, shortcut, command, { noremap = true, silent = true, desc = desc, buffer = 0 })
+  function map(mode, lhs, rhs, desc)
+      vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true, desc = desc, buffer = 0 })
   end
 
-  map('n', '<leader>f', vim.lsp.buf.formatting, "Format file")
+  map('n', '<leader>f', vim.lsp.buf.format, "Format file")
   map('n', '<leader>rn', vim.lsp.buf.rename, "Rename symbol")
 
   map('n', 'gd', vim.lsp.buf.definition, "Go to the definition of symbol")
@@ -94,8 +100,7 @@ local on_attach = function(client, bufnr)
   map('n', 'gD', vim.lsp.buf.declaration, "Go to the declaration of symbol")
   map('n', "gi", require('telescope.builtin').lsp_implementations, "List the implementations of symbol")
   map('n', "gr", require('telescope.builtin').lsp_references, "List the references of symbol")
-  map('n', "ga", require('telescope.builtin').lsp_code_actions, "List code actions for the current location")
-  map('v', "ga", ":<c-u>lua TSRCA()<cr>", "List code actions for the current selection")
+  map('n', "ga", vim.lsp.buf.code_action, "List code actions for the current location")
 
   map('n', 'K', vim.lsp.buf.hover, "Show documentation of symbol")
   map('n', "<leader>o", require('telescope.builtin').lsp_document_symbols, "List all symbols in document")
@@ -123,6 +128,11 @@ nvim_lsp.rust_analyzer.setup({
         }
     }
 })
+
+nvim_lsp.fsautocomplete.setup {
+  on_attach = on_attach,
+  capabilities = capabilities
+}
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {
@@ -257,11 +267,18 @@ require("dapui").setup({
 })
 -- }}}
 -- Telescope {{{
-require('telescope').setup{}
+require('telescope').setup{
+  --extensions = {
+  --  ["ui-select"] = {
+  --  }
+  --}
+}
 function nnoremap(shortcut, command)
     vim.api.nvim_set_keymap("n", shortcut, command, { noremap = true, silent = true })
 end
-nnoremap("<leader>p", "<cmd>lua require('telescope.builtin').git_files()<cr>")
+nnoremap("<leader>p", "<cmd>lua require('telescope.builtin').git_files({ show_untracked = true })<cr>")
+
+require('telescope').load_extension("ui-select")
 
 --- }}}
 -- Lualine {{{
@@ -309,3 +326,16 @@ vim.cmd([[
   highlight WinSeparator ctermfg=Grey ctermbg=none
 ]])
 --- }}}
+-- Lightspeed {{{
+vim.g.lightspeed_no_default_keymaps = true
+require'lightspeed'.setup {}
+
+vim.keymap.set("n", "s", "<Plug>Lightspeed_omni_s", { silent = true, noremap = true})
+vim.keymap.set("n", "gs", "<Plug>Lightspeed_omni_gs", { silent = true, noremap = true})
+-- }}}
+-- Floaterm {{{
+nnoremap("<leader>F", "<cmd>FloatermToggle!<cr>")
+-- }}}
+-- Figdet {{{
+require'fidget'.setup{}
+-- }}}

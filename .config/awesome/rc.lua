@@ -1,3 +1,4 @@
+-- Includes {{{
 -- If LuaRocks is installed, make sure that packages installed through it are
 -- found (e.g. lgi). If LuaRocks is not installed, do nothing.
 pcall(require, "luarocks.loader")
@@ -17,7 +18,7 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
-
+-- }}}
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -42,7 +43,6 @@ do
     end)
 end
 -- }}}
-
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
 beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
@@ -62,8 +62,8 @@ modkey = "Mod4"
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
     -- awful.layout.suit.floating,
-    awful.layout.suit.tile,
-    -- awful.layout.suit.tile.left,
+    -- awful.layout.suit.tile,
+    awful.layout.suit.tile.left,
     -- awful.layout.suit.tile.bottom,
     -- awful.layout.suit.tile.top,
     -- awful.layout.suit.fair,
@@ -79,7 +79,6 @@ awful.layout.layouts = {
     -- awful.layout.suit.corner.se,
 }
 -- }}}
-
 -- {{{ Menu
 -- Create a launcher widget and a main menu
 myawesomemenu = {
@@ -100,10 +99,6 @@ mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
-
--- Keyboard map indicator and switcher
--- mykeyboardlayout = awful.widget.keyboardlayout()
-
 -- {{{ Wibar
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
@@ -201,15 +196,6 @@ awful.screen.connect_for_each_screen(function(s)
     }
 end)
 -- }}}
-
--- {{{ Mouse bindings
--- root.buttons(gears.table.join(
---     awful.button({ }, 3, function () mymainmenu:toggle() end),
---     awful.button({ }, 4, awful.tag.viewnext),
---     awful.button({ }, 5, awful.tag.viewprev)
--- ))
--- }}}
-
 -- {{{ Key bindings
 globalkeys = gears.table.join(
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
@@ -239,14 +225,6 @@ globalkeys = gears.table.join(
               {description = "focus the previous screen", group = "screen"}),
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
               {description = "jump to urgent client", group = "client"}),
-    awful.key({ modkey,           }, "Tab",
-        function ()
-            awful.client.focus.history.previous()
-            if client.focus then
-                client.focus:raise()
-            end
-        end,
-        {description = "go back", group = "client"}),
 
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
@@ -316,7 +294,7 @@ globalkeys = gears.table.join(
 	function ()
 	    local tag = mouse.screen.selected_tag
 	    if awful.layout.get_tag_layout_index(tag) == nil then
-	        awful.layout.set(awful.layout.suit.tile)
+	        awful.layout.set(awful.layout.suit.tile.left)
 	    else
 	        awful.layout.set(awful.layout.suit.max)
 	    end
@@ -328,7 +306,27 @@ globalkeys = gears.table.join(
 	function ()
         awful.screen.focus_relative(1)
 	end,
-	{description = "Focus other screen", group = "layout"})
+	{description = "Focus other screen", group = "layout"}),
+
+	-- media keys
+    awful.key({ },            "XF86AudioRaiseVolume",     function ()
+			awful.util.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%")
+		end, {}),
+    awful.key({ },            "XF86AudioLowerVolume",     function ()
+			awful.util.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%")
+		end, {}),
+    awful.key({ },            "XF86AudioMute",     function ()
+			awful.util.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")
+		end, {}),
+    awful.key({ },            "XF86AudioPlay",     function ()
+			awful.util.spawn("playerctl --player=spotify play-pause")
+		end, {}),
+    awful.key({ },            "XF86AudioPrev",     function ()
+			awful.util.spawn("playerctl --player=spotify previous")
+		end, {}),
+    awful.key({ },            "XF86AudioNext",     function ()
+			awful.util.spawn("playerctl --player=spotify next")
+		end, {})
 )
 
 clientkeys = gears.table.join(
@@ -354,39 +352,7 @@ clientkeys = gears.table.join(
             c.maximized = not c.maximized
             c:raise()
         end ,
-        {description = "(un)maximize", group = "client"}),
-    awful.key({ modkey, "Control" }, "m",
-        function (c)
-            c.maximized_vertical = not c.maximized_vertical
-            c:raise()
-        end ,
-        {description = "(un)maximize vertically", group = "client"}),
-    awful.key({ modkey, "Shift"   }, "m",
-        function (c)
-            c.maximized_horizontal = not c.maximized_horizontal
-            c:raise()
-        end ,
-        {description = "(un)maximize horizontally", group = "client"}),
-
-	-- media keys
-    awful.key({ },            "XF86AudioRaiseVolume",     function ()
-			awful.util.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%")
-		end, {}),
-    awful.key({ },            "XF86AudioLowerVolume",     function ()
-			awful.util.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%")
-		end, {}),
-    awful.key({ },            "XF86AudioMute",     function ()
-			awful.util.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")
-		end, {}),
-    awful.key({ },            "XF86AudioPlay",     function ()
-			awful.util.spawn("playerctl --player=spotify play-pause")
-		end, {}),
-    awful.key({ },            "XF86AudioPrev",     function ()
-			awful.util.spawn("playerctl --player=spotify previous")
-		end, {}),
-    awful.key({ },            "XF86AudioNext",     function ()
-			awful.util.spawn("playerctl --player=spotify next")
-		end, {})
+        {description = "(un)maximize", group = "client"})
 )
 
 -- Bind all key numbers to tags.
@@ -438,7 +404,8 @@ for i = 1, 9 do
                   {description = "toggle focused client on tag #" .. i, group = "tag"})
     )
 end
-
+-- }}}
+-- {{{ Mouse bindings
 clientbuttons = gears.table.join(
     awful.button({ }, 1, function (c)
         c:emit_signal("request::activate", "mouse_click", {raise = true})
@@ -459,7 +426,6 @@ clientbuttons = gears.table.join(
 -- Set keys
 root.keys(globalkeys)
 -- }}}
-
 -- {{{ Rules
 -- Rules to apply to new clients (through the "manage" signal).
 awful.rules.rules = {
@@ -507,19 +473,20 @@ awful.rules.rules = {
         }
       }, properties = { floating = true }},
 
-    -- Add titlebars to normal clients and dialogs
+    -- Remove titlebars
     { rule_any = {type = { "normal", "dialog" }
       }, properties = { titlebars_enabled = false }
     },
 
-    -- Set Firefox to always map on the tag named "2" on screen 1.
     { rule = { class = "discord" },
        properties = { screen = 1, tag = "4" } },
-    { rule = { class = "Spotify" },
-       properties = { screen = 1, tag = "9" } },
+
+    { rule = { name = "Making a multiplayer game in Rust" },
+       properties = { screen = 1, floating = true } },
+    { rule = { name = "Making a multiplayer game in Rust - Client" },
+       properties = { screen = 1, floating = true, focus = false } },
 }
 -- }}}
-
 -- {{{ Signals
 -- Signal function to execute when a new client appears.
 client.connect_signal("manage", function (c)

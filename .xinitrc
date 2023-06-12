@@ -26,10 +26,16 @@ fi
 
 setxkbmap -option "caps:super,numpad:microsoft"
 
+#xrandr | grep DP-0
+#retstatus = $?
+#if [ $retstatus -eq 0 ] &&
+xrandr --output DP-0.8 --primary --output DP-0.1 --auto --right-of DP-0.8
+
 session=${1:-awesome}
 
 case $session in
 	awesome ) exec awesome;;
 	plasma  ) exec startplasma-x11;;
+    gnome   ) exec gnome-session;;
 	*       ) exec awesome;;
 esac
