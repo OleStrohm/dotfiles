@@ -7,6 +7,8 @@ require'nvim-treesitter.configs'.setup {
   },
   indent = { enable = true },
 }
+
+require'tree-sitter-just'.setup{}
 -- }}}
 -- Filetype {{{
 require("filetype").setup({
@@ -14,6 +16,9 @@ require("filetype").setup({
     extensions = {
       scm = "query",
       fs = "fsharp",
+    },
+    literal = {
+      justfile = "just",
     },
   },
 })
@@ -77,18 +82,13 @@ require'luasnip'.config.set_config {
 -- Rest of configuration is in after/plugin/luasnip.lua
 -- }}}
 -- LSP {{{
+-- Set up neovim lua docs
 local nvim_lsp = require'lspconfig'
 
-function TSRCA()
-  local opts =  {}
-  opts.params = vim.lsp.util.make_given_range_params()
-  require('telescope.builtin').lsp_code_actions(opts)
-end
-
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
-local on_attach = function(client, bufnr)
+local on_attach = function(--[[client, bufnr--]])
   -- lsp keymaps {{{
-  function map(mode, lhs, rhs, desc)
+  local function map(mode, lhs, rhs, desc)
       vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true, desc = desc, buffer = 0 })
   end
 
@@ -110,23 +110,75 @@ local on_attach = function(client, bufnr)
   -- }}}
 end
 
+local function tableMerge(t1, t2)
+    for k,v in pairs(t2) do
+        if type(v) == "table" then
+            if type(t1[k] or false) == "table" then
+                tableMerge(t1[k] or {}, t2[k] or {})
+            else
+                t1[k] = v
+            end
+        else
+            t1[k] = v
+        end
+    end
+    return t1
+end
+
+local function merge_with_local(cfg)
+  local project_specific_settings = loadfile(vim.fn.getcwd() .. '/lspconfig.lua')
+
+  if project_specific_settings ~= nil then
+    local local_cfg = project_specific_settings()
+
+    return tableMerge(cfg, local_cfg)
+  end
+
+  return cfg
+end
+
 nvim_lsp.rust_analyzer.setup({
-    on_attach=on_attach,
-    capabilities = capabilities,
-    settings = {
-        ["rust-analyzer"] = {
-            assist = {
-                importGranularity = "module",
-                importPrefix = "by_self",
-            },
-            cargo = {
-                loadOutDirsFromCheck = true
-            },
-            procMacro = {
-                enable = true
-            },
-        }
+  on_attach=on_attach,
+  capabilities = capabilities,
+  settings = merge_with_local {
+    ["rust-analyzer"] = {
+      assist = {
+        importGranularity = "module",
+        importPrefix = "by_self",
+      },
+      cargo = {
+        features = "all",
+      },
+      check = {
+        command = "clippy",
+      },
+      inlayHints = {
+        enable = true,
+      }
+      -- This should be the default now
+      --cargo = {
+      --  loadOutDirsFromCheck = true
+      --},
+      --procMacro = {
+      --  enable = true
+      --},
     }
+  },
+  --cmd = { "/home/ole/src/rust-analyzer/target/debug/rust-analyzer" },
+})
+
+require("neodev").setup({})
+
+nvim_lsp.lua_ls.setup({
+  on_attach=on_attach,
+  capabilities = capabilities,
+  settings = {
+    Lua = {
+      completion = {
+        callSnippet = "Replace"
+      }
+    }
+  }
 })
 
 nvim_lsp.fsautocomplete.setup {
@@ -141,6 +193,16 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
     update_in_insert = true,
   }
 )
+
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+  callback = function(args)
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    if client and client.server_capabilities.inlayHintProvider then
+      vim.lsp.inlay_hint.enable(args.buf, true)
+    end
+  end
+})
 
 --- }}}
 -- Nvim-dap {{{
@@ -165,9 +227,9 @@ dap.adapters.rt_lldb = function(callback, _)
   }
 
   handle, pid_or_err = vim.loop.spawn(codelldb_path, opts, function(code)
-    stdout:close()
-    stderr:close()
-    handle:close()
+    if stdout then stdout:close() end
+    if stderr then stderr:close() end
+    if handle then handle:close() end
     if code ~= 0 then
       print("codelldb exited with code", code)
       print("error message", error_message)
@@ -176,38 +238,42 @@ dap.adapters.rt_lldb = function(callback, _)
 
   assert(handle, "Error running codelldb: " .. tostring(pid_or_err))
 
-  stdout:read_start(function(err, chunk)
-    assert(not err, err)
-    if chunk then
-      if not port then
-        local chunks = {}
-        for substring in chunk:gmatch "%S+" do
-          table.insert(chunks, substring)
+  if stdout then
+    stdout:read_start(function(err, chunk)
+      assert(not err, err)
+      if chunk then
+        if not port then
+          local chunks = {}
+          for substring in chunk:gmatch "%S+" do
+            table.insert(chunks, substring)
+          end
+          port = tonumber(chunks[#chunks])
+          vim.schedule(function()
+            callback {
+              type = "server",
+              host = "127.0.0.1",
+              port = port,
+            }
+          end)
+        else
+          vim.schedule(function()
+            require("dap.repl").append(chunk)
+          end)
         end
-        port = tonumber(chunks[#chunks])
-        vim.schedule(function()
-          callback {
-            type = "server",
-            host = "127.0.0.1",
-            port = port,
-          }
-        end)
-      else
+      end
+    end)
+  end
+  if stderr then
+    stderr:read_start(function(_, chunk)
+      if chunk then
+        error_message = error_message .. chunk
+
         vim.schedule(function()
           require("dap.repl").append(chunk)
         end)
       end
-    end
-  end)
-  stderr:read_start(function(_, chunk)
-    if chunk then
-      error_message = error_message .. chunk
-
-      vim.schedule(function()
-        require("dap.repl").append(chunk)
-      end)
-    end
-  end)
+    end)
+  end
 end
 
 dap.configurations.rust = {
@@ -273,10 +339,11 @@ require('telescope').setup{
   --  }
   --}
 }
-function nnoremap(shortcut, command)
+local function nnoremap(shortcut, command)
     vim.api.nvim_set_keymap("n", shortcut, command, { noremap = true, silent = true })
 end
 nnoremap("<leader>p", "<cmd>lua require('telescope.builtin').git_files({ show_untracked = true })<cr>")
+vim.keymap.set('n', '<leader>d', require('telescope.builtin').diagnostics, { desc = 'Show all diagnostics' })
 
 require('telescope').load_extension("ui-select")
 
@@ -324,6 +391,7 @@ require('lualine').setup {
 vim.cmd([[
   colorscheme minimalist
   highlight WinSeparator ctermfg=Grey ctermbg=none
+  highlight link LspInlayHint Comment
 ]])
 --- }}}
 -- Lightspeed {{{
@@ -337,5 +405,19 @@ vim.keymap.set("n", "gs", "<Plug>Lightspeed_omni_gs", { silent = true, noremap =
 nnoremap("<leader>F", "<cmd>FloatermToggle!<cr>")
 -- }}}
 -- Figdet {{{
-require'fidget'.setup{}
+require'fidget'.setup{
+  progress = {
+    lsp = {
+      progress_ringbuf_size = 1024
+    },
+  },
+}
+-- }}}
+-- FTerm {{{
+require'FTerm'.setup {
+  dimensions = {
+    height = 0.9,
+    width = 0.9,
+  },
+}
 -- }}}

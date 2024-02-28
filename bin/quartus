@@ -1,4 +1,0 @@
-#!/bin/sh
-
-cd ~/programs/quartus/20.1/quartus/bin/
-./quartus

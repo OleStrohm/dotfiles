@@ -81,7 +81,7 @@ cursor:
 #   - (Linux/BSD) user login shell
 #   - (Windows) powershell
 shell:
-  program: /bin/fish
+  program: /run/current-system/sw/bin/fish
 #  args:
 #    - --login
 

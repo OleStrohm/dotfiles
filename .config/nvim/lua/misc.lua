@@ -1,9 +1,9 @@
 vim.g.floaterm_autoclose = 1
-function nnoremap(shortcut, command)
-    vim.keymap.set("n", shortcut, command, { noremap = true, silent = true })
+local function nnoremap(shortcut, command, desc)
+  vim.keymap.set("n", shortcut, command, { noremap = true, silent = true, desc = desc })
 end
-function tnoremap(shortcut, command)
-    vim.keymap.set("t", shortcut, command, { noremap = true, silent = true })
+local function tnoremap(shortcut, command)
+  vim.keymap.set("t", shortcut, command, { noremap = true, silent = true })
 end
 nnoremap("<leader>w", ":write!<cr>")
 nnoremap("Q", "@q")
@@ -13,7 +13,7 @@ nnoremap("<leader>vn", function()
   vim.cmd("new $HOME/.config/nvim/" .. new_file)
 end)
 
-nnoremap("<enter>", ":nohlsearch<cr>")
+nnoremap("<enter>", ":nohlsearch<cr>:echo<cr>", "Clear highlights and the cmdline")
 
 -- terminal
 nnoremap("<leader>T", ":split<cr>:terminal<cr>i")
@@ -35,3 +35,15 @@ nnoremap("<left>", "gT")
 nnoremap("<right>", "gt")
 
 vim.cmd([[hi link helpCommand Type]])
+
+vim.opt_global.runtimepath:append("~/workspace/nvim/crates")
+
+-- Various lsp things
+require 'lsp_test'
+-- Toggle inlay hints
+vim.keymap.set("n", "<leader>i", function() vim.lsp.inlay_hint.enable(0, not vim.lsp.inlay_hint.is_enabled()) end)
+
+function R(name)
+  package.loaded[name] = nil
+  return require(name)
+end

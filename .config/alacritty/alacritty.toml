@@ -1,0 +1,63 @@
+[colors.bright]
+black = "#575757"
+blue = "#3d5195"
+cyan = "#12bccb"
+green = "#19b630"
+magenta = "#87008c"
+red = "#cc0000"
+white = "#eeeeec"
+yellow = "#d5c80e"
+
+[colors.normal]
+black = "#363636"
+blue = "#344888"
+cyan = "#06989a"
+green = "#1f671a"
+magenta = "#640064"
+red = "#a31600"
+white = "#d3d7cf"
+yellow = "#b1a60c"
+
+[colors.primary]
+background = "#1d1f21"
+foreground = "#d5d8d6"
+
+[cursor.style]
+shape = "Underline"
+
+[env]
+TERM = "alacritty"
+
+[font]
+size = 10.0
+
+[font.bold]
+family = "DejaVu Sans Mono"
+style = "Bold"
+
+[font.bold_italic]
+family = "DejaVu Sans Mono"
+style = "Bold Italic"
+
+[font.italic]
+family = "DejaVu Sans Mono"
+style = "Italic"
+
+[font.normal]
+family = "DejaVu Sans Mono"
+style = "Regular"
+
+[font.offset]
+x = 0
+y = 0
+
+[[keyboard.bindings]]
+action = "SpawnNewInstance"
+key = "Return"
+mods = "Control|Shift"
+
+[mouse]
+hide_when_typing = true
+
+[shell]
+program = "/run/current-system/sw/bin/fish"

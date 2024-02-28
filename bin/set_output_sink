@@ -1,3 +1,18 @@
-#!/bin/sh
+#!/usr/bin/env fish
 
-pactl set-default-sink $(echo -e "monitor\nheadset" | dmenu -i | sed -e "/monitor/c alsa_output.pci-0000_01_00.1.hdmi-stereo-extra4" -e "/headset/c alsa_output.usb-Logitech_PRO_X_Wireless_Gaming_Headset-00.analog-stereo")
+set options "monitor\nheadset" 
+if test (pactl get-default-sink) = "alsa_output.pci-0000_03_00.1.hdmi-stereo"
+    set options "headset\nmonitor" 
+end
+
+set default_sink (echo -e "$options" | dmenu -i | sed -e "/monitor/c alsa_output.pci-0000_03_00.1.hdmi-stereo" -e "/headset/c alsa_output.usb-Logitech_PRO_X_Wireless_Gaming_Headset-00.analog-stereo")
+if test -z $default_sink
+    exit 0
+end
+
+pactl set-default-sink $default_sink
+set default_sink_index (pactl list short sinks | rg $default_sink | awk '{ print $1 }')
+
+pactl list short sink-inputs | awk '{ print $1 }' | while read serial
+    pactl move-sink-input $serial $default_sink_index
+end

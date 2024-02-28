@@ -1,3 +1,16 @@
+local ensure_packer = function()
+  local fn = vim.fn
+  local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
+  if fn.empty(fn.glob(install_path)) > 0 then
+    fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+    vim.cmd [[packadd packer.nvim]]
+    return true
+  end
+  return false
+end
+
+local packer_bootstrap = ensure_packer()
+
 return require('packer').startup(function()
   use 'wbthomason/packer.nvim'
 
@@ -28,9 +41,12 @@ return require('packer').startup(function()
   -- Snippets
   use 'L3MON4D3/LuaSnip'
   use 'saadparwaiz1/cmp_luasnip'
+
+  use 'folke/neodev.nvim'
   
   -- Floaterms for development
   use 'voldikss/vim-floaterm'
+  use 'numToStr/FTerm.nvim'
 
   use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"} }
 
@@ -42,4 +58,10 @@ return require('packer').startup(function()
   use 'dikiaap/minimalist'
 
   use 'j-hui/fidget.nvim'
+
+  use 'IndianBoy42/tree-sitter-just'
+
+  if packer_bootstrap then
+    require('packer').sync()
+  end
 end)

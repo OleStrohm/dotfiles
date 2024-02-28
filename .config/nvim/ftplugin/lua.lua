@@ -21,6 +21,7 @@ vim.keymap.set("n", "gf", LuaGoto, { silent = true, noremap = true, buffer = 0, 
 vim.keymap.set("n", "<leader>rl", "<cmd>w<cr><cmd>luafile %<cr>", { silent = true, noremap = true, buffer = 0, desc = "Save and reload current lua file" })
 
 vim.opt_local.shiftwidth=2
+vim.opt_local.tabstop=2
 vim.opt_local.foldmethod="marker"
 vim.cmd[[
   highlight link TSVariable TSText

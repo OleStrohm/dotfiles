@@ -6,7 +6,9 @@ set -Ux BROWSER "firefox"
 if status is-interactive
     fish_vi_key_bindings
 
-    zoxide init fish | source
+    if type -q zoxide
+        zoxide init fish | source
+    end
 
     alias v "nvim"
     alias vim "nvim"
@@ -27,3 +29,9 @@ if status is-interactive
     alias gc "git commit"
     alias gp "git push"
 end
+
+#if ! set -q DISPLAY
+#    if test $XDG_VTNR -eq 1
+#        startx
+#    end
+#end

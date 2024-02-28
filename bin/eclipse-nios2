@@ -1,4 +1,0 @@
-#!/bin/sh
-
-cd ~/programs/quartus/20.1/nios2eds/bin/
-./eclipse-nios2

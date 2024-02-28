@@ -302,7 +302,7 @@ globalkeys = gears.table.join(
 	{description = "Toggle fullscreen", group = "layout"}),
 
     -- Switch focused screen
-    awful.key({ modkey, "Shift" }, "o",
+    awful.key({ modkey }, "o",
 	function ()
         awful.screen.focus_relative(1)
 	end,
@@ -336,7 +336,7 @@ clientkeys = gears.table.join(
               {description = "toggle floating", group = "client"}),
     awful.key({ modkey, "Shift" }, "Return", function (c) c:swap(awful.client.getmaster()) end,
               {description = "move to master", group = "client"}),
-    awful.key({ modkey,           }, "o",      function (c) c:move_to_screen()               end,
+    awful.key({ modkey, "Shift" }, "o",      function (c) c:move_to_screen()               end,
               {description = "move to screen", group = "client"}),
     awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end,
               {description = "toggle keep on top", group = "client"}),
@@ -478,13 +478,13 @@ awful.rules.rules = {
       }, properties = { titlebars_enabled = false }
     },
 
+    { rule = { class = "firefox" },
+       properties = { opacity = 1, maximized = false, floating = false } },
     { rule = { class = "discord" },
        properties = { screen = 1, tag = "4" } },
 
-    { rule = { name = "Making a multiplayer game in Rust" },
-       properties = { screen = 1, floating = true } },
-    { rule = { name = "Making a multiplayer game in Rust - Client" },
-       properties = { screen = 1, floating = true, focus = false } },
+    { rule = { name = "Making a game in Rust with Bevy" },
+       properties = { screen = 1, floating = true, above = true, focus = true } },
 }
 -- }}}
 -- {{{ Signals
