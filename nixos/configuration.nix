@@ -111,6 +111,7 @@ efi /memtest86+/memtest.efi
     discord
     vim
     wget
+    zoxide
   ];
 
   programs.neovim = {
