@@ -112,6 +112,8 @@ efi /memtest86+/memtest.efi
     vim
     wget
     zoxide
+    clang
+    rust-analyzer
   ];
 
   programs.neovim = {
