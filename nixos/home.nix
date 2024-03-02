@@ -11,7 +11,7 @@
   home.packages = [
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
-    pkgs.hello
+    # pkgs.hello
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -34,6 +34,11 @@
     # # the Nix store. Activating the configuration will then make '~/.screenrc' a
     # # symlink to the Nix store copy.
     # ".screenrc".source = dotfiles/screenrc;
+    ".config/nvim".source = ../nvim;
+    ".config/fish".source = ../fish;
+    ".config/alacritty".source = ../alacritty;
+    ".config/awesome".source = ../awesome;
+    ".config/picom".source = ../picom;
 
     # # You can also set the file content immediately.
     # ".gradle/gradle.properties".text = ''
