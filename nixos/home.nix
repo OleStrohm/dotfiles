@@ -36,7 +36,7 @@
     # ".screenrc".source = dotfiles/screenrc;
     ".config/nvim".source = ../nvim;
     ".config/fish".source = ../fish;
-    ".config/alacritty".source = ../alacritty;
+    ".config/alacritty/alacritty.toml".source = ../alacritty.toml;
     ".config/awesome".source = ../awesome;
     ".config/picom".source = ../picom;
 
