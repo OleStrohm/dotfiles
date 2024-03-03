@@ -20,6 +20,7 @@
   programs.noisetorch.enable = true;
 
   programs.fish.enable = true;
+  programs.direnv.enable = true;
 
   # Default root password to nothing
   users.users.root.initialHashedPassword = ""; # TODO: This can probably be removed
@@ -113,7 +114,7 @@ efi /memtest86+/memtest.efi
     wget
     zoxide
     clang
-    rust-analyzer
+    ripgrep
   ];
 
   programs.neovim = {
