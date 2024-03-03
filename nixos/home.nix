@@ -38,6 +38,7 @@
     ".config/fish".source = ../fish;
     ".config/alacritty/alacritty.toml".source = ../alacritty.toml;
     ".config/awesome".source = ../awesome;
+    ".config/hypr/hyprland.conf".source = ../hyprland.conf;
     ".config/picom".source = ../picom;
 
     # # You can also set the file content immediately.

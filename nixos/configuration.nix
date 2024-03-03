@@ -21,6 +21,10 @@
 
   programs.fish.enable = true;
   programs.direnv.enable = true;
+  programs.hyprland = {
+    enable = true;
+    xwayland.enable = true;
+  };
 
   # Default root password to nothing
   users.users.root.initialHashedPassword = ""; # TODO: This can probably be removed
@@ -115,6 +119,7 @@ efi /memtest86+/memtest.efi
     zoxide
     clang
     ripgrep
+    kitty
   ];
 
   programs.neovim = {
