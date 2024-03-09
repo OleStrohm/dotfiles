@@ -78,6 +78,8 @@ efi /memtest86+/memtest.efi
   services.xserver.enable = true;
   services.xserver.windowManager.awesome.enable = true;
   services.xserver.displayManager.startx.enable = true;
+  services.xserver.wacom.enable = true;
+  services.getty.autologinUser = "ole";
 
   # Configure keymap in X11
   services.xserver.xkb.layout = "gb";
@@ -120,6 +122,8 @@ efi /memtest86+/memtest.efi
     clang
     ripgrep
     kitty
+    wofi
+    aseprite
   ];
 
   programs.neovim = {
