@@ -40,6 +40,7 @@
     ".config/awesome".source = ../awesome;
     ".config/hypr/hyprland.conf".source = ../hyprland.conf;
     ".config/picom".source = ../picom;
+    ".xinitrc".source = ../.xinitrc;
 
     # # You can also set the file content immediately.
     # ".gradle/gradle.properties".text = ''

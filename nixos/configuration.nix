@@ -124,6 +124,9 @@ efi /memtest86+/memtest.efi
     kitty
     wofi
     aseprite
+    spotify
+    xclip
+    fd
   ];
 
   programs.neovim = {

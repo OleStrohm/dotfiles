@@ -33,8 +33,8 @@ if status is-interactive
     alias gp "git push"
 end
 
-#if ! set -q DISPLAY
-#    if test $XDG_VTNR -eq 1
-#        startx
-#    end
-#end
+if ! set -q DISPLAY
+    if test $XDG_VTNR -eq 1
+        startx
+    end
+end
