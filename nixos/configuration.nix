@@ -12,6 +12,19 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  hardware.fancontrol.enable = true;
+  hardware.fancontrol.config = ''
+INTERVAL=10
+DEVPATH=hwmon0=devices/platform/nct6775.656 hwmon3=devices/pci0000:00/0000:00:18.3
+DEVNAME=hwmon0=nct6799 hwmon3=k10temp
+FCTEMPS=hwmon0/pwm6=hwmon3/temp1_input hwmon0/pwm3=hwmon3/temp1_input hwmon0/pwm2=hwmon3/temp1_input
+FCFANS=hwmon0/pwm6=hwmon0/fan6_input hwmon0/pwm3=hwmon0/fan3_input hwmon0/pwm2=hwmon0/fan5_input+hwmon0/fan2_input
+MINTEMP=hwmon0/pwm6=40 hwmon0/pwm3=40 hwmon0/pwm2=40
+MAXTEMP=hwmon0/pwm6=80 hwmon0/pwm3=80 hwmon0/pwm2=80
+MINSTART=hwmon0/pwm6=66 hwmon0/pwm3=66 hwmon0/pwm2=66
+MINSTOP=hwmon0/pwm6=26 hwmon0/pwm3=26 hwmon0/pwm2=26
+  '';
+
   nixpkgs.config.allowUnfree = true;
   #nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
   #  "steam"
@@ -25,6 +38,8 @@
     enable = true;
     xwayland.enable = true;
   };
+
+  programs.htop.enable = true;
 
   # Default root password to nothing
   users.users.root.initialHashedPassword = ""; # TODO: This can probably be removed
@@ -127,6 +142,12 @@ efi /memtest86+/memtest.efi
     spotify
     xclip
     fd
+    maim
+    lm_sensors
+    eza
+    btop
+    dust
+    kicad
   ];
 
   programs.neovim = {
@@ -174,6 +195,5 @@ efi /memtest86+/memtest.efi
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "23.11"; # Did you read the comment?
-
 }
 

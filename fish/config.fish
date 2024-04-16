@@ -21,10 +21,10 @@ if status is-interactive
     alias x "startx"
     alias X "startx"
     alias p "pacman"
-    alias exaa "exa -la --git"
-    alias exal "exa -l"
-    if type -q exa
-        alias ls "exa"
+    alias ezaa "eza -la --git"
+    alias ezal "eza -l"
+    if type -q eza
+        alias ls "eza"
     end
     alias gs "git status"
     alias ga "git add"
