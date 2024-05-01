@@ -4,7 +4,9 @@
 
 { config, lib, pkgs, ... }:
 
-{
+let
+  udevRules = pkgs.callPackage ./udev.nix { inherit pkgs; };
+in {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
@@ -121,6 +123,8 @@ efi /memtest86+/memtest.efi
     ];
   };
 
+  services.udev.packages = [ udevRules ];
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -148,12 +152,18 @@ efi /memtest86+/memtest.efi
     btop
     dust
     kicad
+    zip
+    freecad
+    obsidian
+    probe-rs
+    flip-link
   ];
 
   programs.neovim = {
     enable = true;
     defaultEditor = true;
   };
+
 # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
