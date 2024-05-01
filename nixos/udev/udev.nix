@@ -1,9 +1,8 @@
-{ stdenv }:
-stdenv.mkDerivation rec {
+{ pkgs }: pkgs.stdenv.mkDerivation rec {
   name = "probe_rs_udev_rules-${version}";
   version = "1.0";
 
-  src = ../69-probe-rs.rules;
+  src = ./.;
 
   nativeBuildINputs = [];
   buildInputs = [];

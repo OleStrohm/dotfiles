@@ -5,7 +5,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  udevRules = pkgs.callPackage ./udev.nix { inherit pkgs; };
+  udevRules = pkgs.callPackage ./udev/udev.nix { inherit pkgs; };
 in {
   imports =
     [ # Include the results of the hardware scan.
