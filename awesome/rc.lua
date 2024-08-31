@@ -481,7 +481,9 @@ awful.rules.rules = {
     { rule = { class = "firefox" },
        properties = { opacity = 1, maximized = false, floating = false } },
     { rule = { class = "discord" },
-       properties = { screen = 1, tag = "4" } },
+       properties = { tag = "4" } },
+    { rule = { class = "[Ss]potify" },
+       properties = { tag = "9" } },
 
     { rule = { name = "Making a game in Rust with Bevy" },
        properties = { screen = 1, floating = true, above = true, focus = true } },
