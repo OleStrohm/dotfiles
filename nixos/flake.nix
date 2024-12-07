@@ -19,7 +19,7 @@
     let
       system = "x86_64-linux";
       overlays = [
-        neovim-nightly-overlay.overlay
+        neovim-nightly-overlay.overlays.default
       ];
     in {
     nixosConfigurations.mars = nixpkgs.lib.nixosSystem {

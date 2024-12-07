@@ -6,6 +6,39 @@ set -Ux BROWSER "firefox"
 if status is-interactive
     fish_vi_key_bindings
 
+    abbr ls "lscat"
+    abbr cat "lscat"
+
+    function _lscat_file
+	    set path $argv
+	    command cat $path
+    end
+
+    function _lscat_dir
+        set path $argv
+	    eza -la $path
+    end
+
+    function lscat
+        if test -z $argv
+            _lscat_dir .
+        end
+
+        for path in $argv
+            if test -f $path
+   	    	    _lscat_file $path
+   	        else if test -d $path
+   	    	    _lscat_dir $path
+   	        else if test ! -e $path
+   	    	    echo "No such file or directory: $path"
+   	    	    return 1
+   	        else
+   	    	    echo "Unhandled case for: $path"
+   	    	    return 1
+   	        end
+   	    end
+    end
+
     if type -q direnv
         direnv hook fish | source
     end

@@ -48,7 +48,7 @@ return require('packer').startup(function()
   use 'voldikss/vim-floaterm'
   use 'numToStr/FTerm.nvim'
 
-  use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"} }
+  use { "rcarriga/nvim-dap-ui", requires = { { "mfussenegger/nvim-dap" }, { "nvim-neotest/nvim-nio" } } }
 
   use 'TimUntersberger/neogit'
 

@@ -485,8 +485,17 @@ awful.rules.rules = {
     { rule = { class = "[Ss]potify" },
        properties = { tag = "9" } },
 
+    -- Game debug
     { rule = { name = "Making a game in Rust with Bevy" },
        properties = { screen = 1, floating = true, above = true, focus = true } },
+    { rule = { class = "AOE-Clone (DEBUG)" },
+       properties = { floating = true, } },
+    { rule = { class = "MPLobby (DEBUG)" },
+       properties = { floating = true, } },
+    { rule = { name = "Bevy AoE" },
+       properties = { floating = true, above = true, focus = true } },
+    { rule = { name = "Bevy AoE - client" },
+       properties = { floating = true, above = true, focus = false } },
 }
 -- }}}
 -- {{{ Signals
