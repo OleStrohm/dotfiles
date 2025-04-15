@@ -41,7 +41,7 @@ vim.opt_global.runtimepath:append("~/workspace/nvim/crates")
 -- Various lsp things
 require 'lsp_test'
 -- Toggle inlay hints
-vim.keymap.set("n", "<leader>i", function() vim.lsp.inlay_hint.enable(0, not vim.lsp.inlay_hint.is_enabled()) end)
+vim.keymap.set("n", "<leader>i", function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end)
 
 function R(name)
   package.loaded[name] = nil

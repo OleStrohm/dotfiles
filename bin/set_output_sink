@@ -1,18 +1,13 @@
-#!/usr/bin/env fish
+#! /run/current-system/sw/bin/env sh
 
-set options "monitor\nheadset" 
-if test (pactl get-default-sink) = "alsa_output.pci-0000_03_00.1.hdmi-stereo"
-    set options "headset\nmonitor" 
-end
+CUR_DEFAULT=$(pw-dump | jq -r '.[] | select(.metadata) | .metadata[] | select(.key == "default.audio.sink") | .value.name')
+CUR_DEFAULT_NAME=$(pw-dump | jq -r '.[] | select(.info.props."media.class" == "Audio/Sink") | select(.info.props."node.name" == "'$CUR_DEFAULT'") | .info.props."node.nick"')
+NAMES=$(pw-dump | jq -r '.[] | select(.info.props."media.class" == "Audio/Sink") | select(.info.props."node.name" != "'$CUR_DEFAULT'") | .info.props."node.nick"')
+NAMES=$(echo -e "$NAMES\n$CUR_DEFAULT_NAME")
+NAME=$(echo "$NAMES" | dmenu -i)
 
-set default_sink (echo -e "$options" | dmenu -i | sed -e "/monitor/c alsa_output.pci-0000_03_00.1.hdmi-stereo" -e "/headset/c alsa_output.usb-Logitech_PRO_X_Wireless_Gaming_Headset-00.analog-stereo")
-if test -z $default_sink
-    exit 0
-end
+if [ $? -eq 0 ]; then
+    ID=$(pw-dump | jq -r ".[] | select(.info.props.\"media.class\" == \"Audio/Sink\" and .info.props.\"node.nick\" == \"$NAME\") | .id")
 
-pactl set-default-sink $default_sink
-set default_sink_index (pactl list short sinks | rg $default_sink | awk '{ print $1 }')
-
-pactl list short sink-inputs | awk '{ print $1 }' | while read serial
-    pactl move-sink-input $serial $default_sink_index
-end
+    wpctl set-default $ID
+fi

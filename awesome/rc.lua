@@ -310,13 +310,13 @@ globalkeys = gears.table.join(
 
 	-- media keys
     awful.key({ },            "XF86AudioRaiseVolume",     function ()
-			awful.util.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%")
+			awful.util.spawn("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+")
 		end, {}),
     awful.key({ },            "XF86AudioLowerVolume",     function ()
-			awful.util.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%")
+			awful.util.spawn("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-")
 		end, {}),
     awful.key({ },            "XF86AudioMute",     function ()
-			awful.util.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")
+			awful.util.spawn("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")
 		end, {}),
     awful.key({ },            "XF86AudioPlay",     function ()
 			awful.util.spawn("playerctl --player=spotify play-pause")
@@ -510,6 +510,30 @@ client.connect_signal("manage", function (c)
       and not c.size_hints.program_position then
         -- Prevent clients from being unreachable after screen count changes.
         awful.placement.no_offscreen(c)
+    end
+end)
+
+client.connect_signal("manage", function (c) 
+    awful.client.setslave(c)
+    c.opacity = 1
+    if awesome.startup
+        and not c.size_hints.user_position
+        and not c.size_hints.program_position then
+        -- Prevent clients from being unreachable after screen count changes.
+        awful.placement.no_offscreen(c)
+    end
+    -- the previous code should be already there as its in the default rc.lua
+    -- or some variation of it
+    if c.name and c.name:find("^Stremio -") ~= nil then -- classname starts with "Stremio -"
+        print("Suspend")
+        awful.spawn("xdg-screensaver suspend " .. c.window) -- this is the bit you want
+    end
+end)
+
+client.connect_signal("unmanage", function(c)
+    if c.name and c.name:find("^Stremio -") ~= nil then
+        print("Resume")
+        awful.spawn("xdg-screensaver resume " .. c.window)
     end
 end)
 

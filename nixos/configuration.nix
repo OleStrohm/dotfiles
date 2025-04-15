@@ -106,7 +106,7 @@ efi /memtest86+/memtest.efi
   # services.printing.enable = true;
 
   # Enable sound.
-  hardware.pulseaudio.enable = true;
+  # hardware.pulseaudio.enable = false;
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -122,7 +122,40 @@ efi /memtest86+/memtest.efi
     ];
   };
 
+  services.autorandr.enable = true;
+  services.autorandr.matchEdid = true;
+  services.autorandr.profiles = {
+    mars = {
+      fingerprint = {
+        "DP-3" = "00ffffffffffff0030aee961000000002b1e0104a53c22783e6665a9544c9d26105054a1080081c0810081809500a9c0b300d1c00101565e00a0a0a0295030203500615d2100001a000000fc00503237682d32300a2020202020000000fd00324c1e5a24000a202020202020000000ff0056393036523830350affffffff01f0020318f14b9005040302011f13140e0f23090f0783010000662156aa51001e30468f33000f282100001eab22a0a050841a30302036000f282100001c7c2e90a0601a1e40302036000f282100001c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006a";
+        "HDMI-1" = "00ffffffffffff000469c324fdf700001019010380341d782a2ac5a4564f9e280f5054b7ef00d1c0814081809500b300714f81c08100023a801871382d40582c450009252100001e000000ff0046344c4d54463036333438350a000000fd00324b185311000a202020202020000000fc004153555320564e3234370a202001f6020322714f0102031112130414050e0f1d1e1f10230917078301000065030c0010008c0ad08a20e02d10103e9600fd1e11000018011d007251d01e206e285500fd1e1100001e011d00bc52d01e20b8285540fd1e1100001e8c0ad090204031200c405500fd1e11000018000000000000000000000000000000000000000000e9";
+      };
+      config = {
+        "DP-3" = {
+          enable = true;
+          primary = true;
+          mode = "2560x1440";
+          position = "0x0";
+          rate = "59.95";
+          crtc = 0;
+        };
+        "HDMI-1" = {
+          enable = true;
+          mode = "1920x1080";
+          position = "2560x0";
+          rate = "60.00";
+          crtc = 0;
+        };
+      };
+    };
+  };
+
   services.udev.packages = [ udevRules ];
+
+  programs.neovim = {
+    enable = true;
+    defaultEditor = true;
+  };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -157,12 +190,12 @@ efi /memtest86+/memtest.efi
     probe-rs
     godot_4
     inkscape
+    stremio
+    delta
+    jq
+    playerctl
+    ftb-app
   ];
-
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true;
-  };
 
   system.stateVersion = "23.11"; # Do not modify
 }
