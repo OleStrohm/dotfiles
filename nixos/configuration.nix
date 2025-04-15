@@ -194,7 +194,7 @@ efi /memtest86+/memtest.efi
     delta
     jq
     playerctl
-    ftb-app
+    #ftb-app
   ];
 
   system.stateVersion = "23.11"; # Do not modify
