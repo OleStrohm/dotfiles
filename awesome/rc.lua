@@ -528,10 +528,18 @@ client.connect_signal("manage", function (c)
         print("Suspend")
         awful.spawn("xdg-screensaver suspend " .. c.window) -- this is the bit you want
     end
+    if c.name and c.name:find("^God of War") ~= nil then -- classname starts with "Stremio -"
+        print("Suspend")
+        awful.spawn("xdg-screensaver suspend " .. c.window) -- this is the bit you want
+    end
 end)
 
 client.connect_signal("unmanage", function(c)
     if c.name and c.name:find("^Stremio -") ~= nil then
+        print("Resume")
+        awful.spawn("xdg-screensaver resume " .. c.window)
+    end
+    if c.name and c.name:find("^God of War") ~= nil then
         print("Resume")
         awful.spawn("xdg-screensaver resume " .. c.window)
     end
