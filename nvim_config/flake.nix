@@ -111,7 +111,6 @@
           vim-sleuth
           lazy-nvim
           comment-nvim
-          gitsigns-nvim
           which-key-nvim
           telescope-nvim
           telescope-fzf-native-nvim
@@ -123,11 +122,7 @@
           fidget-nvim
           conform-nvim
           blink-cmp
-          nvim-cmp
           luasnip
-          cmp_luasnip
-          cmp-nvim-lsp
-          cmp-path
           tokyonight-nvim
           todo-comments-nvim
           mini-nvim
@@ -144,7 +139,6 @@
           nvim-dap-lldb
           nvim-dap
           nvim-dap-ui
-          nvim-dap-go
           nvim-nio
         ];
         kickstart-indent_line = [
@@ -250,8 +244,8 @@
           customPlugins = true;
           test = true;
 
-          kickstart-autopairs = true;
-          kickstart-neo-tree = true;
+          kickstart-autopairs = false;
+          kickstart-neo-tree = false;
           kickstart-debug = true;
           kickstart-lint = true;
           kickstart-indent_line = true;
@@ -259,7 +253,7 @@
           # this kickstart extra didnt require any extra plugins
           # so it doesnt have a category above.
           # but we can still send the info from nix to lua that we want it!
-          kickstart-gitsigns = true;
+          kickstart-gitsigns = false;
 
           # we can pass whatever we want actually.
           have_nerd_font = true;
