@@ -13,24 +13,17 @@ if status is-interactive
         zoxide init fish | source
     end
 
-    alias v "nvim"
-    alias vim "nvim"
-    alias fishrc "nvim ~/.config/fish/config.fish"
-    alias awesomerc "nvim ~/.config/awesome/rc.lua"
-    alias picomrc "nvim ~/.config/picom/picom.conf"
+    alias rebuild "sudo nixos-rebuild switch --flake /home/ole/dotfiles/nixos/"
+
+    alias v "nix run ~/dotfiles/nvim_config/ -- "
+    alias vim "v"
     alias x "startx"
     alias X "startx"
-    alias p "pacman"
     alias ezaa "eza -la --git"
     alias ezal "eza -l"
     if type -q eza
         alias ls "eza"
     end
-    alias gs "git status"
-    alias ga "git add"
-    alias gd "git diff"
-    alias gc "git commit"
-    alias gp "git push"
 end
 
 if ! set -q DISPLAY
