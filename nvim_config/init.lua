@@ -174,7 +174,7 @@ vim.opt.scrolloff = 10
 --  See `:help vim.keymap.set()`
 
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
-vim.keymap.set('n', '<leader>w', '<cmd>w<CR>')
+vim.keymap.set('n', '<leader>w', '<cmd>w<CR>', { desc = '[W]rite file' })
 
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<CR>', '<cmd>nohlsearch<CR>')
@@ -833,7 +833,6 @@ require('nixCatsUtils.lazyCat').setup(nixCats.pawsible { 'allPlugins', 'start', 
   -- from the categories set in your packageDefinitions in your flake or other template!
   -- This is because within them, we used nixCats to check if it should be loaded!
   require 'kickstart.plugins.debug',
-  require 'kickstart.plugins.indent_line',
   require 'kickstart.plugins.lint',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`

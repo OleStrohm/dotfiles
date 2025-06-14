@@ -99,8 +99,6 @@
           lua-language-server
           nixd
           stylua
-        ];
-        kickstart-lint = [
           markdownlint-cli
         ];
       };
@@ -126,88 +124,14 @@
           tokyonight-nvim
           todo-comments-nvim
           mini-nvim
-          nvim-treesitter.withAllGrammars
-          # This is for if you only want some of the grammars
-          # (nvim-treesitter.withPlugins (
-          #   plugins: with plugins; [
-          #     nix
-          #     lua
-          #   ]
-          # ))
-        ];
-        kickstart-debug = [
+          (nvim-treesitter.withPlugins (plugins: with plugins; [ rust nix lua cpp ]))
+          nvim-lint
+          # Debugging
           nvim-dap-lldb
           nvim-dap
           nvim-dap-ui
           nvim-nio
         ];
-        kickstart-indent_line = [
-          indent-blankline-nvim
-        ];
-        kickstart-lint = [
-          nvim-lint
-        ];
-        kickstart-autopairs = [
-          nvim-autopairs
-        ];
-        kickstart-neo-tree = [
-          neo-tree-nvim
-          nui-nvim
-          # nixCats will filter out duplicate packages
-          # so you can put dependencies with stuff even if they're
-          # also somewhere else
-          nvim-web-devicons
-          plenary-nvim
-        ];
-      };
-
-      # not loaded automatically at startup.
-      # use with packadd and an autocommand in config to achieve lazy loading
-      # NOTE: this template is using lazy.nvim so, which list you put them in is irrelevant.
-      # startupPlugins or optionalPlugins, it doesnt matter, lazy.nvim does the loading.
-      # I just put them all in startupPlugins. I could have put them all in here instead.
-      optionalPlugins = {};
-
-      # shared libraries to be added to LD_LIBRARY_PATH
-      # variable available to nvim runtime
-      sharedLibraries = {
-        general = with pkgs; [
-          # libgit2
-        ];
-      };
-
-      # environmentVariables:
-      # this section is for environmentVariables that should be available
-      # at RUN TIME for plugins. Will be available to path within neovim terminal
-      environmentVariables = {
-        test = {
-          CATTESTVAR = "It worked!";
-        };
-      };
-
-      # If you know what these are, you can provide custom ones by category here.
-      # If you dont, check this link out:
-      # https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/setup-hooks/make-wrapper.sh
-      extraWrapperArgs = {
-        test = [
-          '' --set CATTESTVAR2 "It worked again!"''
-        ];
-      };
-
-      # lists of the functions you would have passed to
-      # python.withPackages or lua.withPackages
-      # do not forget to set `hosts.python3.enable` in package settings
-
-      # get the path to this python environment
-      # in your lua config via
-      # vim.g.python3_host_prog
-      # or run from nvim terminal via :!<packagename>-python3
-      python3.libraries = {
-        test = (_:[]);
-      };
-      # populates $LUA_PATH and $LUA_CPATH
-      extraLuaPackages = {
-        test = [ (_:[]) ];
       };
     };
 
@@ -244,30 +168,8 @@
           customPlugins = true;
           test = true;
 
-          kickstart-autopairs = false;
-          kickstart-neo-tree = false;
-          kickstart-debug = true;
-          kickstart-lint = true;
-          kickstart-indent_line = true;
-
-          # this kickstart extra didnt require any extra plugins
-          # so it doesnt have a category above.
-          # but we can still send the info from nix to lua that we want it!
-          kickstart-gitsigns = false;
-
           # we can pass whatever we want actually.
           have_nerd_font = true;
-
-          example = {
-            youCan = "add more than just booleans";
-            toThisSet = [
-              "and the contents of this categories set"
-              "will be accessible to your lua with"
-              "nixCats('path.to.value')"
-              "see :help nixCats"
-              "and type :NixCats to see the categories set in nvim"
-            ];
-          };
         };
       };
     };
