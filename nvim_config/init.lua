@@ -177,15 +177,17 @@ vim.opt.tabstop = 4
 vim.opt.expandtab = true
 
 -- Folding {{{
-vim.o.foldmethod="marker"
-vim.opt.foldopen:remove { "search" }
+vim.o.foldmethod = 'marker'
+vim.opt.foldopen:remove { 'search' }
 
-vim.keymap.set("n", "/", "zn/", { desc = "Search and Pause Folds" })
+vim.keymap.set('n', '/', 'zn/', { desc = 'Search and Pause Folds' })
 vim.on_key(function(char)
   local key = vim.fn.keytrans(char)
-  local searchKeys = { "n", "N", "*", "#", "/", "?" }
-  local searchConfirmed = (key == "<CR>" and vim.fn.getcmdtype():find("[/?]") ~= nil)
-  if not (searchConfirmed or vim.fn.mode() == "n") then return end
+  local searchKeys = { 'n', 'N', '*', '#', '/', '?' }
+  local searchConfirmed = (key == '<CR>' and vim.fn.getcmdtype():find '[/?]' ~= nil)
+  if not (searchConfirmed or vim.fn.mode() == 'n') then
+    return
+  end
 
   local searchKeyUsed = searchConfirmed or (vim.tbl_contains(searchKeys, key))
   local pauseFold = vim.opt.foldenable:get() and searchKeyUsed
@@ -194,24 +196,24 @@ vim.on_key(function(char)
     vim.opt.foldenable = false
   elseif unpauseFold then
     vim.opt.foldenable = true
-    vim.cmd.normal("zv")
+    vim.cmd.normal 'zv'
   end
-end, vim.api.nvim_create_namespace("auto_pause_folds"))
+end, vim.api.nvim_create_namespace 'auto_pause_folds')
 
-vim.keymap.set("n", "h", function()
-  local onIndentOrFirstNonBlank = vim.fn.virtcol(".") <= vim.fn.indent(".") + 1
-  local shouldCloseFold = vim.tbl_contains(vim.opt_local.foldopen:get(), "hor")
+vim.keymap.set('n', 'h', function()
+  local onIndentOrFirstNonBlank = vim.fn.virtcol '.' <= vim.fn.indent '.' + 1
+  local shouldCloseFold = vim.tbl_contains(vim.opt_local.foldopen:get(), 'hor')
   if onIndentOrFirstNonBlank and shouldCloseFold then
-    local wasFolded = pcall(vim.cmd.normal, "zc")
-    if wasFolded then return end
+    local wasFolded = pcall(vim.cmd.normal, 'zc')
+    if wasFolded then
+      return
+    end
   end
-  vim.cmd.normal { "h", bang = true }
-end, { desc = "h (+ close fold at BoL)" })
+  vim.cmd.normal { 'h', bang = true }
+end, { desc = 'h (+ close fold at BoL)' })
 -- }}}
-
--- [[ Basic Keymaps ]]
---  See `:help vim.keymap.set()`
--- Set highlight on search, but clear on pressing <Esc> in normal mode
+-- }}}
+-- Keymaps {{{
 vim.keymap.set('n', '<leader>w', '<cmd>w<CR>', { desc = '[W]rite file' })
 
 vim.opt.hlsearch = true
@@ -227,35 +229,13 @@ end, { desc = 'Go to next [D]iagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
--- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
--- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
--- is not what someone will guess without a bit more experience.
---
--- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
--- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
--- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
-
--- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---
---  See `:help wincmd` for a list of all window commands
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
--- [[ Basic Autocommands ]]
---  See `:help lua-guide-autocommands`
-
--- Highlight when yanking (copying) text
---  Try it with `yap` in normal mode
---  See `:help vim.highlight.on_yank()`
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
@@ -263,8 +243,8 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.highlight.on_yank()
   end,
 })
-
--- NOTE: nixCats: You might want to move the lazy-lock.json file
+-- }}}
+-- Lazy {{{
 local function getlockfilepath()
   if require('nixCatsUtils').isNixCats and type(nixCats.settings.unwrappedCfgPath) == 'string' then
     return nixCats.settings.unwrappedCfgPath .. '/lazy-lock.json'
@@ -294,8 +274,8 @@ local lazyOptions = {
     },
   },
 }
--- }}}
 require('nixCatsUtils.lazyCat').setup(nixCats.pawsible { 'allPlugins', 'start', 'lazy.nvim' }, {
+  -- }}}
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
   { 'numToStr/Comment.nvim', name = 'comment.nvim', opts = {} },
   { -- which-key.nvim {{{
@@ -400,12 +380,17 @@ require('nixCatsUtils.lazyCat').setup(nixCats.pawsible { 'allPlugins', 'start', 
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
+      vim.keymap.set('n', '<leader>p', function()
+        builtin.git_files { show_untracked = true }
+      end, { desc = 'Search for files in [p]roject' })
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+      vim.keymap.set('n', '<leader>sG', "yiw:lua require'telescope.builtin'.live_grep({glob_pattern = '!bld*'})<cr><C-R>\"", { desc = '[S]earch by [G]rep' })
+      vim.keymap.set('v', '<leader>sG', "y:lua require'telescope.builtin'.live_grep({glob_pattern = '!bld*'})<cr><C-R>\"", { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
@@ -760,7 +745,14 @@ require('nixCatsUtils.lazyCat').setup(nixCats.pawsible { 'allPlugins', 'start', 
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     end,
   }, -- }}}
-  { 'numToStr/FTerm.nvim', opts = { dimensions = { height = 0.9, width = 0.9 } } },
+  { -- FTerm {{{
+    'numToStr/FTerm.nvim',
+    opts = { dimensions = { height = 0.9, width = 0.9 } },
+    config = function(_, opts)
+      require("FTerm").setup(opts)
+      vim.keymap.set('n', "<leader>F", require"FTerm".toggle, { desc = "Toggle [F]loating terminal" })
+    end
+  }, -- }}}
   { -- Leap.nvim {{{
     'ggandor/leap.nvim',
     config = function()
