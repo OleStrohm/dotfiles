@@ -16,7 +16,12 @@ return {
     'nvim-neotest/nvim-nio',
 
     -- Add your own debuggers here
-    'julianolf/nvim-dap-lldb',
+    {
+      'julianolf/nvim-dap-lldb',
+      opts = {
+        codelldb_path = '/nix/store/azkpzqkvahhzm2dp8jyf6kw6hvpq7vi5-vscode-extension-vadimcn-vscode-lldb-1.11.4/share/vscode/extensions/vadimcn.vscode-lldb/adapter/codelldb',
+      },
+    },
   },
   config = function()
     local dap = require 'dap'
@@ -27,10 +32,10 @@ return {
     vim.keymap.set('n', '<F1>', dap.step_into, { desc = 'Debug: Step Into' })
     vim.keymap.set('n', '<F2>', dap.step_over, { desc = 'Debug: Step Over' })
     vim.keymap.set('n', '<F3>', dap.step_out, { desc = 'Debug: Step Out' })
-    vim.keymap.set('n', '<leader>b', dap.toggle_breakpoint, { desc = 'Debug: Toggle Breakpoint' })
+    vim.keymap.set('n', '<leader>b', dap.toggle_breakpoint, { desc = 'Debug: Toggle [B]reakpoint' })
     vim.keymap.set('n', '<leader>B', function()
       dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ')
-    end, { desc = 'Debug: Set Breakpoint' })
+    end, { desc = 'Debug: Set [B]reakpoint' })
 
     -- Dap UI setup
     -- For more information, see |:help nvim-dap-ui|

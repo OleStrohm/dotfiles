@@ -1,3 +1,4 @@
+-- Intro {{{
 --[[
 
 =====================================================================
@@ -97,7 +98,8 @@ P.S. You can delete this when you're done too. It's your config now! :)
 require('nixCatsUtils').setup {
   non_nix_value = true,
 }
-
+-- }}}
+-- Vim options {{{
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -170,9 +172,45 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
+-- Good tabs
+vim.opt.tabstop = 4
+vim.opt.expandtab = true
+
+-- Folding {{{
+vim.o.foldmethod="marker"
+vim.opt.foldopen:remove { "search" }
+
+vim.keymap.set("n", "/", "zn/", { desc = "Search and Pause Folds" })
+vim.on_key(function(char)
+  local key = vim.fn.keytrans(char)
+  local searchKeys = { "n", "N", "*", "#", "/", "?" }
+  local searchConfirmed = (key == "<CR>" and vim.fn.getcmdtype():find("[/?]") ~= nil)
+  if not (searchConfirmed or vim.fn.mode() == "n") then return end
+
+  local searchKeyUsed = searchConfirmed or (vim.tbl_contains(searchKeys, key))
+  local pauseFold = vim.opt.foldenable:get() and searchKeyUsed
+  local unpauseFold = not (vim.opt.foldenable:get()) and not searchKeyUsed
+  if pauseFold then
+    vim.opt.foldenable = false
+  elseif unpauseFold then
+    vim.opt.foldenable = true
+    vim.cmd.normal("zv")
+  end
+end, vim.api.nvim_create_namespace("auto_pause_folds"))
+
+vim.keymap.set("n", "h", function()
+  local onIndentOrFirstNonBlank = vim.fn.virtcol(".") <= vim.fn.indent(".") + 1
+  local shouldCloseFold = vim.tbl_contains(vim.opt_local.foldopen:get(), "hor")
+  if onIndentOrFirstNonBlank and shouldCloseFold then
+    local wasFolded = pcall(vim.cmd.normal, "zc")
+    if wasFolded then return end
+  end
+  vim.cmd.normal { "h", bang = true }
+end, { desc = "h (+ close fold at BoL)" })
+-- }}}
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
-
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.keymap.set('n', '<leader>w', '<cmd>w<CR>', { desc = '[W]rite file' })
 
@@ -181,10 +219,10 @@ vim.keymap.set('n', '<CR>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', function()
-  vim.diagnostic.jump { count = -1 }
+  vim.diagnostic.jump { count = -1, float = true }
 end, { desc = 'Go to previous [D]iagnostic message' })
 vim.keymap.set('n', ']d', function()
-  vim.diagnostic.jump { count = 1 }
+  vim.diagnostic.jump { count = 1, float = true }
 end, { desc = 'Go to next [D]iagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
@@ -256,54 +294,11 @@ local lazyOptions = {
     },
   },
 }
-
--- [[ Configure and install plugins ]]
---
---  To check the current status of your plugins, run
---    :Lazy
---
---  You can press `?` in this menu for help. Use `:q` to close the window
---
---  To update plugins you can run
---    :Lazy update
---
--- NOTE: Here is where you install your plugins.
--- NOTE: nixCats: this the lazy wrapper. Use it like require('lazy').setup() but with an extra
--- argument, the path to lazy.nvim as downloaded by nix, or nil, before the normal arguments.
+-- }}}
 require('nixCatsUtils.lazyCat').setup(nixCats.pawsible { 'allPlugins', 'start', 'lazy.nvim' }, {
-  -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-
-  -- NOTE: Plugins can also be added by using a table,
-  -- with the first argument being the link and the following
-  -- keys can be used to configure plugin behavior/loading/etc.
-  --
-  -- Use `opts = {}` to force a plugin to be loaded.
-  --
-  --  This is equivalent to:
-  --    require('Comment').setup({})
-
-  -- "gc" to comment visual regions/lines
-  -- NOTE: nixCats: nix downloads it with a different file name.
-  -- tell lazy about that.
   { 'numToStr/Comment.nvim', name = 'comment.nvim', opts = {} },
-
-  -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
-  --
-  -- This is often very useful to both group configuration, as well as handle
-  -- lazy loading plugins that don't need to be loaded immediately at startup.
-  --
-  -- For example, in the following configuration, we use:
-  --  event = 'VimEnter'
-  --
-  -- which loads which-key before all the UI elements are loaded. Events can be
-  -- normal autocommands events (`:help autocmd-events`).
-  --
-  -- Then, because we use the `config` key, the configuration only runs
-  -- after the plugin has been loaded:
-  --  config = function() ... end
-
-  { -- Useful plugin to show you pending keybinds.
+  { -- which-key.nvim {{{
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     config = function() -- This is the function that runs, AFTER loading
@@ -331,15 +326,8 @@ require('nixCatsUtils.lazyCat').setup(nixCats.pawsible { 'allPlugins', 'start', 
       }
     end,
   },
-
-  -- NOTE: Plugins can specify dependencies.
-  --
-  -- The dependencies are proper plugin specifications as well - anything
-  -- you do for a plugin at the top level, you can do for a dependency.
-  --
-  -- Use the `dependencies` key to specify the dependencies of a particular plugin
-
-  { -- Fuzzy Finder (files, lsp, etc)
+  -- }}}
+  { -- Telescope {{{
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
     branch = '0.1.x',
@@ -446,19 +434,22 @@ require('nixCatsUtils.lazyCat').setup(nixCats.pawsible { 'allPlugins', 'start', 
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
     end,
-  },
-
-  { -- LSP Configuration & Plugins
+  }, -- }}}
+  { -- LSP Config {{{
     'neovim/nvim-lspconfig',
     dependencies = {
       -- Useful status updates for LSP.
-      -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       { 'j-hui/fidget.nvim', opts = {} },
 
-      { 'saghen/blink.cmp', opts = { keymap = { preset = 'super-tab' } } },
+      -- Completion
+      {
+        'saghen/blink.cmp',
+        opts = {
+          keymap = { preset = 'super-tab' },
+          cmdline = { keymap = { preset = 'inherit' }, completion = { menu = { auto_show = true } } },
+        },
+      },
 
-      -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
-      -- used for completion, annotations and signatures of Neovim apis
       {
         'folke/lazydev.nvim',
         ft = 'lua',
@@ -469,7 +460,6 @@ require('nixCatsUtils.lazyCat').setup(nixCats.pawsible { 'allPlugins', 'start', 
           },
         },
       },
-      -- kickstart.nvim was still on neodev. lazydev is the new version of neodev
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -609,88 +599,47 @@ require('nixCatsUtils.lazyCat').setup(nixCats.pawsible { 'allPlugins', 'start', 
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       -- NOTE: nixCats: there is help in nixCats for lsps at `:h nixCats.LSPs` and also `:h nixCats.luaUtils`
-      local servers = {}
-      -- servers.clangd = {},
-      -- servers.gopls = {},
-      -- servers.pyright = {},
-      -- servers.rust_analyzer = {},
-      -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-      --
-      -- Some languages (like typescript) have entire language plugins that can be useful:
-      --    https://github.com/pmizio/typescript-tools.nvim
-      --
-      -- But for many setups, the LSP (`tsserver`) will work just fine
-      -- servers.tsserver = {},
-      --
-
-      -- NOTE: nixCats: nixd is not available on mason.
-      -- Feel free to check the nixd docs for more configuration options:
-      -- https://github.com/nix-community/nixd/blob/main/nixd/docs/configuration.md
-      if require('nixCatsUtils').isNixCats then
-        servers.nixd = {}
-      else
-        servers.rnix = {}
-        servers.nil_ls = {}
-      end
-      servers.lua_ls = {
-        -- cmd = {...},
-        -- filetypes = { ...},
-        -- capabilities = {},
-        settings = {
-          Lua = {
-            completion = {
-              callSnippet = 'Replace',
+      local servers = {
+        rust_analyzer = {
+          settings = {
+            assist = {
+              importGranularity = 'module',
+              importPrefix = 'by_self',
             },
-            -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-            diagnostics = {
-              globals = { 'nixCats' },
-              disable = { 'missing-fields' },
+            cargo = {
+              features = 'all',
+            },
+            check = {
+              command = 'clippy',
+            },
+            inlayHints = {
+              enable = true,
+            },
+          },
+        },
+        nixd = {},
+        lua_ls = {
+          settings = {
+            Lua = {
+              completion = {
+                callSnippet = 'Replace',
+              },
+              diagnostics = {
+                globals = { 'nixCats' },
+                disable = { 'missing-fields' },
+              },
             },
           },
         },
       }
 
-      -- NOTE: nixCats: if nix, use lspconfig instead of mason
-      -- You could MAKE it work, using lspsAndRuntimeDeps and sharedLibraries in nixCats
-      -- but don't... its not worth it. Just add the lsp to lspsAndRuntimeDeps.
-      if require('nixCatsUtils').isNixCats then
-        -- set up the servers to be loaded on the appropriate filetypes!
-        for server_name, cfg in pairs(servers) do
-          vim.lsp.config(server_name, cfg)
-          vim.lsp.enable(server_name)
-        end
-      else
-        -- NOTE: nixCats: and if no nix, use mason
-
-        -- Ensure the servers and tools above are installed
-        --  To check the current status of installed tools and/or manually install
-        --  other tools, you can run
-        --    :Mason
-        --
-        --  You can press `g?` for help in this menu.
-        require('mason').setup()
-
-        -- You can add other tools here that you want Mason to install
-        -- for you, so that they are available from within Neovim.
-        local ensure_installed = vim.tbl_keys(servers or {})
-        vim.list_extend(ensure_installed, {
-          'stylua', -- Used to format Lua code
-        })
-        require('mason-tool-installer').setup { ensure_installed = ensure_installed }
-
-        require('mason-lspconfig').setup {
-          handlers = {
-            function(server_name)
-              vim.lsp.config(server_name, servers[server_name] or {})
-              vim.lsp.enable(server_name)
-            end,
-          },
-        }
+      for server_name, cfg in pairs(servers) do
+        vim.lsp.config(server_name, cfg)
+        vim.lsp.enable(server_name)
       end
     end,
-  },
-
-  { -- Autoformat
+  }, -- }}}
+  { -- Autoformat {{{
     'stevearc/conform.nvim',
     lazy = false,
     keys = {
@@ -705,16 +654,16 @@ require('nixCatsUtils.lazyCat').setup(nixCats.pawsible { 'allPlugins', 'start', 
     },
     opts = {
       notify_on_error = false,
-      format_on_save = function(bufnr)
-        -- Disable "format_on_save lsp_fallback" for languages that don't
-        -- have a well standardized coding style. You can add additional
-        -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
-        return {
-          timeout_ms = 500,
-          lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
-        }
-      end,
+      -- format_on_save = function(bufnr)
+      --   -- Disable "format_on_save lsp_fallback" for languages that don't
+      --   -- have a well standardized coding style. You can add additional
+      --   -- languages here or re-enable it for the disabled ones.
+      --   local disable_filetypes = { c = true, cpp = true }
+      --   return {
+      --     timeout_ms = 500,
+      --     lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
+      --   }
+      -- end,
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
@@ -725,13 +674,8 @@ require('nixCatsUtils.lazyCat').setup(nixCats.pawsible { 'allPlugins', 'start', 
         -- javascript = { { "prettierd", "prettier" } },
       },
     },
-  },
-
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
+  }, -- }}}
+  { -- Colorscheme {{{
     'folke/tokyonight.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
@@ -743,12 +687,9 @@ require('nixCatsUtils.lazyCat').setup(nixCats.pawsible { 'allPlugins', 'start', 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
     end,
-  },
-
-  -- Highlight todo, notes, etc in comments
+  }, -- }}}
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
-
-  { -- Collection of various small independent plugins/modules
+  { -- Mini plugins {{{
     'echasnovski/mini.nvim',
     config = function()
       -- Better Around/Inside textobjects
@@ -764,28 +705,28 @@ require('nixCatsUtils.lazyCat').setup(nixCats.pawsible { 'allPlugins', 'start', 
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
-      require('mini.surround').setup()
+      -- require('mini.surround').setup()
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
-      local statusline = require 'mini.statusline'
-      -- set use_icons to true if you have a Nerd Font
-      statusline.setup { use_icons = vim.g.have_nerd_font }
+      -- local statusline = require 'mini.statusline'
+      -- -- set use_icons to true if you have a Nerd Font
+      -- statusline.setup { use_icons = vim.g.have_nerd_font }
 
-      -- You can configure sections in the statusline by overriding their
-      -- default behavior. For example, here we set the section for
-      -- cursor location to LINE:COLUMN
-      ---@diagnostic disable-next-line: duplicate-set-field
-      statusline.section_location = function()
-        return '%2l:%-2v'
-      end
+      -- -- You can configure sections in the statusline by overriding their
+      -- -- default behavior. For example, here we set the section for
+      -- -- cursor location to LINE:COLUMN
+      -- ---@diagnostic disable-next-line: duplicate-set-field
+      -- statusline.section_location = function()
+      --   return '%2l:%-2v'
+      -- end
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
-  },
-  { -- Highlight, edit, and navigate code
+  }, -- }}}
+  { -- Treesitter {{{
     'nvim-treesitter/nvim-treesitter',
     build = require('nixCatsUtils').lazyAdd ':TSUpdate',
     opts = {
@@ -818,28 +759,56 @@ require('nixCatsUtils.lazyCat').setup(nixCats.pawsible { 'allPlugins', 'start', 
       --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     end,
-  },
-
-  -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
-  -- init.lua. If you want these files, they are in the repository, so you can just download them and
-  -- place them in the correct locations.
-
-  -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
-  --
-  --  Here are some example plugins that I've included in the Kickstart repository.
-  --  Uncomment any of the lines below to enable them (you will need to restart nvim).
-  --
-  -- NOTE: nixCats: instead of uncommenting them, you can enable them
-  -- from the categories set in your packageDefinitions in your flake or other template!
-  -- This is because within them, we used nixCats to check if it should be loaded!
+  }, -- }}}
+  { 'numToStr/FTerm.nvim', opts = { dimensions = { height = 0.9, width = 0.9 } } },
+  { -- Leap.nvim {{{
+    'ggandor/leap.nvim',
+    config = function()
+      require('leap').set_default_mappings()
+    end,
+  }, -- }}}
+  { -- Lualine {{{
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    opts = {
+      options = {
+        icons_enabled = true,
+        theme = 'auto',
+        component_separators = { left = '', right = '' },
+        section_separators = { left = '', right = '' },
+        disabled_filetypes = {},
+        always_divide_middle = false,
+        globalstatus = true,
+      },
+      sections = {
+        lualine_a = { 'mode' },
+        lualine_b = {
+          {
+            'diagnostics',
+            sources = { 'nvim_diagnostic' },
+            sections = { 'error', 'warn' },
+            symbols = { error = 'E', warn = 'W' },
+          },
+        },
+        lualine_c = { 'filename' },
+        lualine_x = {},
+        lualine_y = {},
+        lualine_z = { 'location' },
+      },
+      inactive_sections = {
+        lualine_a = {},
+        lualine_b = {},
+        lualine_c = { 'filename' },
+        lualine_x = { 'location' },
+        lualine_y = {},
+        lualine_z = {},
+      },
+      tabline = {},
+      extensions = {},
+    },
+  }, -- }}}
   require 'kickstart.plugins.debug',
   require 'kickstart.plugins.lint',
-
-  -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
-  --    This is the easiest way to modularize your config.
-  --
-  --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
   { import = 'custom.plugins' },
 }, lazyOptions)
 
