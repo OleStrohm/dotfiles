@@ -5,9 +5,9 @@
 return {
   {
     'olestrohm/cargo_test.nvim/',
-    dev = true,
-    name = 'lsp_test',
-    dir = '~/workspace/nvim/cargo_test.nvim/',
+    --dev = true,
+    --name = 'lsp_test',
+    --dir = '~/workspace/nvim/cargo_test.nvim/',
     opts = {},
   },
 }

@@ -19,6 +19,29 @@
 
     dependencyOverlays = /* (import ./overlays inputs) ++ */ [
       (utils.standardPluginOverlay inputs)
+      (self: super:
+        let
+          cargo-test-nvim = super.vimUtils.buildVimPlugin {
+            pname = "cargo_test.nvim";
+            version = "2025-06-25";
+            src = super.fetchFromGitHub {
+              owner = "olestrohm";
+              repo = "cargo_test.nvim";
+              rev = "c2eb1965011726c1df1dd635e5155fe7bf914d3e";
+              sha256 = "sha256-6pXliY4csL3vsfvLS+CCR/0HwxAcGZnD3RVLPDZKGEM=";
+            };
+            disabled = super.lua.luaversion != "5.1";
+            propagatedBuildInputs = [ super.vimPlugins.telescope-nvim ];
+            meta.homepage = "https://github.com/OleStrohm/cargo_test.nvim";
+            meta.hydraPlatforms = [ ];
+          };
+        in
+        {
+          vimPlugins = super.vimPlugins // {
+            inherit cargo-test-nvim;
+          };
+        }
+      )
     ];
 
     categoryDefinitions = { pkgs, ... }: {
@@ -63,6 +86,7 @@
           luasnip
           (nvim-treesitter.withPlugins (plugins: with plugins; [ rust nix lua cpp ]))
           nvim-lint
+          cargo-test-nvim
           # Debugging
           nvim-dap-lldb
           nvim-dap
