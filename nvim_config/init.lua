@@ -616,6 +616,16 @@ require('nixCatsUtils.lazyCat').setup(nixCats.pawsible { 'allPlugins', 'start', 
             },
           },
         },
+        ccls = {
+          init_options = {
+            index = {
+              threads = 0,
+            },
+            clang = {
+              excludeArgs = { "-frounding-math" },
+            },
+          },
+        },
       }
 
       for server_name, cfg in pairs(servers) do
