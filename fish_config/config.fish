@@ -15,7 +15,7 @@ if status is-interactive
 
     alias rebuild "sudo nixos-rebuild switch --flake /home/ole/dotfiles/nixos/"
 
-    alias v "nix run ~/dotfiles/nvim_config/ -- "
+    alias v "nix run github:olestrohm/dotfiles?dir=nvim_config -- "
     alias vim "v"
     alias x "startx"
     alias X "startx"
