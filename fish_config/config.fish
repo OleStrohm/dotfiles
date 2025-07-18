@@ -27,7 +27,9 @@ if status is-interactive
 end
 
 if ! set -q DISPLAY
-    if test $XDG_VTNR -eq 1
-        startx
+    if test -n "$XDG_VTNR"
+        if test $XDG_VTNR -eq 1
+            startx
+        end
     end
 end
