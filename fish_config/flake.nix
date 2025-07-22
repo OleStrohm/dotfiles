@@ -18,8 +18,8 @@
               src = prev.fetchFromGitHub {
                 owner = "OleStrohm";
                 repo = "fish-shell";
-                rev = "010773c44c1a8828558f61c5784d0166d0bd0bc4";
-                hash = "sha256-X/ms5rr2GRjkRtQs8+cPNewIes6QNJ03ne763+PQlRU=";
+                rev = "c73099e8c45bc01b52bee6c7eed7fff829640f8f";
+                hash = "sha256-nPVZUUU5vljahq576HHxkwMuWeIzzbnkpnYbgNy8ue0=";
               };
               patches = [];
               postPatch = "";
