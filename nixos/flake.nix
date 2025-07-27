@@ -11,13 +11,17 @@
       url = "github:nix-community/neovim-nightly-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v0.4.2";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     #ftb-flake = {
     #  url = "path:./ftb";
     #  inputs.nixpkgs.follows = "nixpkgs";
     #};
   };
 
-  outputs = { self, nixpkgs, home-manager, neovim-nightly-overlay/*, ftb-flake*/ }@inputs:
+  outputs = { self, nixpkgs, home-manager, neovim-nightly-overlay, lanzaboote/*, ftb-flake*/ }@inputs:
     let
       system = "x86_64-linux";
       overlays = [
@@ -30,6 +34,7 @@
       specialArgs = { inherit inputs; };
       modules = [
         { nixpkgs = { inherit overlays; }; }
+        lanzaboote.nixosModules.lanzaboote
         ./configuration.nix
         home-manager.nixosModules.home-manager {
           home-manager.useGlobalPkgs = true;

@@ -3,14 +3,10 @@
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
 { config, lib, pkgs, ... }:
-
 let
   udevRules = pkgs.callPackage ./udev/udev.nix { inherit pkgs; };
 in {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [ ./hardware-configuration.nix ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
@@ -28,9 +24,6 @@ MINSTOP=hwmon0/pwm6=26 hwmon0/pwm3=26 hwmon0/pwm2=26
   '';
 
   nixpkgs.config.allowUnfree = true;
-  #nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-  #  "steam"
-  #];
   programs.steam.enable = true;
   programs.noisetorch.enable = true;
 
@@ -43,13 +36,15 @@ MINSTOP=hwmon0/pwm6=26 hwmon0/pwm3=26 hwmon0/pwm2=26
 
   programs.htop.enable = true;
 
-  # Default root password to nothing
   users.users.root.initialHashedPassword = ""; # TODO: This can probably be removed
   users.users.root.shell = pkgs.fish;
 
-  # Use the systemd-boot EFI boot loader.
-  boot.loader.systemd-boot.enable = true;
+  boot.loader.systemd-boot.enable = lib.mkForce false;
   boot.loader.efi.canTouchEfiVariables = false; # TODO: Set to true
+  boot.lanzaboote = {
+    enable = true;
+    pkiBundle = "/var/lib/sbctl/";
+  };
   boot.loader.systemd-boot.extraEntries = {
     "arch.conf" = ''
 title arch
@@ -71,50 +66,27 @@ efi /memtest86+/memtest.efi
 '';
   };
 
-  networking.hostName = "mars"; # Define your hostname.
-  # Pick only one of the below networking options.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
+  networking.hostName = "mars";
+  networking.networkmanager.enable = true;
+  networking.networkmanager.wifi.powersave = false;
 
-  # Set your time zone.
   time.timeZone = "Europe/London";
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Select internationalisation properties.
   i18n.defaultLocale = "en_GB.UTF-8";
   console = {
-    #font = "Lat2-Terminus16";
-    #keyMap = "uk";
-    useXkbConfig = true; # use xkb.options in tty.
+    useXkbConfig = true;
   };
 
-  # Enable the X11 windowing system.
   services.xserver.enable = true;
   services.xserver.windowManager.awesome.enable = true;
   services.xserver.displayManager.startx.enable = true;
   services.xserver.wacom.enable = true;
+  services.xserver.xkb.layout = "gb";
   services.getty.autologinUser = "ole";
 
-  # Configure keymap in X11
-  services.xserver.xkb.layout = "gb";
-  # services.xserver.xkb.options = "eurosign:e,caps:escape";
-
-  # Enable CUPS to print documents.
-  # services.printing.enable = true;
-
-  # Enable sound.
-  # hardware.pulseaudio.enable = false;
-
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.ole = {
     isNormalUser = true;
-    extraGroups = [ "audio" "wheel" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "audio" "wheel" ];
     shell = pkgs.fish;
     packages = with pkgs; [
       firefox
@@ -162,8 +134,6 @@ efi /memtest86+/memtest.efi
     nerd-fonts.fira-code
   ];
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
   environment.systemPackages = with pkgs; [
     alacritty
     neovim
@@ -199,6 +169,7 @@ efi /memtest86+/memtest.efi
     delta
     jq
     playerctl
+    jujutsu
     #ftb-app
   ];
 
