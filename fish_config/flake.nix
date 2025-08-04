@@ -5,16 +5,15 @@
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
   };
 
-  outputs = { self, nixpkgs }:
+  outputs = { nixpkgs, ... }:
     let
       pkgs = (import nixpkgs) {
         system = "x86_64-linux";
         overlays = [
           (final: prev: {
-            fish = prev.fish.overrideAttrs (old: {
+            fish-unwrapped = prev.fish.overrideAttrs (old: {
               doInstallCheck = false;
               checkTarget = "";
-              nativeBuildInputs = old.nativeBuildInputs ++ [ final.makeWrapper ];
               src = prev.fetchFromGitHub {
                 owner = "OleStrohm";
                 repo = "fish-shell";
@@ -24,19 +23,25 @@
               patches = [];
               postPatch = "";
               cargoDeps = prev.rustPlatform.fetchCargoVendor {
-                inherit (final.fish) src;
+                inherit (final.fish-unwrapped) src;
                 hash = "sha256-HFY3/upUnc1CYhxFq8MOSaN6ZnnC/ScyPiYzdG77Wu4=";
               };
               postInstall = old.postInstall + ''
-                wrapProgram $out/bin/fish --add-flag --config_dir=${./.}
               '';
             });
+            fish = prev.runCommand "fish" {
+              nativeBuildInputs = [ prev.makeWrapper ];
+            } ''
+                mkdir -p $out/bin
+                makeWrapper ${final.fish-unwrapped}/bin/fish $out/bin/fish --add-flag --config_dir=${./.} --prefix PATH ":" ${
+                  prev.lib.makeBinPath (with prev; [ fd zoxide ripgrep eza ])
+                }
+            '';
           })
         ];
       };
-    in {
-
+  in
+  {
     packages.x86_64-linux.default = pkgs.fish;
-
   };
 }
