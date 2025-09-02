@@ -7,9 +7,7 @@
 
   outputs = { nixpkgs, ... }:
     let
-      pkgs = (import nixpkgs) {
-        system = "x86_64-linux";
-        overlays = [
+      overlay = 
           (final: prev: {
             fish-unwrapped = prev.fish.overrideAttrs (old: {
               doInstallCheck = false;
@@ -37,11 +35,15 @@
                   prev.lib.makeBinPath (with prev; [ fd zoxide ripgrep eza ])
                 }
             '';
-          })
-        ];
+          });
+
+      pkgs = (import nixpkgs) {
+        system = "x86_64-linux";
+        overlays = [ overlay ];
       };
   in
   {
     packages.x86_64-linux.default = pkgs.fish;
+    overlays.default = overlay;
   };
 }
