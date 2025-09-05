@@ -22,7 +22,7 @@
         neovim-nightly-overlay.overlays.default
       ];
     in {
-    nixosConfigurations.mars = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.deimos = nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = { inherit inputs; };
       modules = [

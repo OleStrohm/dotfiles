@@ -13,19 +13,20 @@ in {
     ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  networking.firewall.enable = false;
 
-  hardware.fancontrol.enable = true;
-  hardware.fancontrol.config = ''
-INTERVAL=10
-DEVPATH=hwmon0=devices/platform/nct6775.656 hwmon3=devices/pci0000:00/0000:00:18.3
-DEVNAME=hwmon0=nct6799 hwmon3=k10temp
-FCTEMPS=hwmon0/pwm6=hwmon3/temp1_input hwmon0/pwm3=hwmon3/temp1_input hwmon0/pwm2=hwmon3/temp1_input
-FCFANS=hwmon0/pwm6=hwmon0/fan6_input hwmon0/pwm3=hwmon0/fan3_input hwmon0/pwm2=hwmon0/fan5_input+hwmon0/fan2_input
-MINTEMP=hwmon0/pwm6=40 hwmon0/pwm3=40 hwmon0/pwm2=40
-MAXTEMP=hwmon0/pwm6=80 hwmon0/pwm3=80 hwmon0/pwm2=80
-MINSTART=hwmon0/pwm6=66 hwmon0/pwm3=66 hwmon0/pwm2=66
-MINSTOP=hwmon0/pwm6=26 hwmon0/pwm3=26 hwmon0/pwm2=26
-  '';
+#  hardware.fancontrol.enable = true;
+#  hardware.fancontrol.config = ''
+#INTERVAL=10
+#DEVPATH=hwmon0=devices/platform/nct6775.656 hwmon3=devices/pci0000:00/0000:00:18.3
+#DEVNAME=hwmon0=nct6799 hwmon3=k10temp
+#FCTEMPS=hwmon0/pwm6=hwmon3/temp1_input hwmon0/pwm3=hwmon3/temp1_input hwmon0/pwm2=hwmon3/temp1_input
+#FCFANS=hwmon0/pwm6=hwmon0/fan6_input hwmon0/pwm3=hwmon0/fan3_input hwmon0/pwm2=hwmon0/fan5_input+hwmon0/fan2_input
+#MINTEMP=hwmon0/pwm6=40 hwmon0/pwm3=40 hwmon0/pwm2=40
+#MAXTEMP=hwmon0/pwm6=80 hwmon0/pwm3=80 hwmon0/pwm2=80
+#MINSTART=hwmon0/pwm6=66 hwmon0/pwm3=66 hwmon0/pwm2=66
+#MINSTOP=hwmon0/pwm6=26 hwmon0/pwm3=26 hwmon0/pwm2=26
+#  '';
 
   nixpkgs.config.allowUnfree = true;
   #nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
@@ -49,6 +50,7 @@ MINSTOP=hwmon0/pwm6=26 hwmon0/pwm3=26 hwmon0/pwm2=26
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
+  boot.loader.timeout = 0;
   boot.loader.efi.canTouchEfiVariables = false; # TODO: Set to true
   boot.loader.systemd-boot.extraEntries = {
     "arch.conf" = ''
@@ -71,50 +73,34 @@ efi /memtest86+/memtest.efi
 '';
   };
 
-  networking.hostName = "mars"; # Define your hostname.
-  # Pick only one of the below networking options.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
+  networking.hostName = "deimos";
+  networking.networkmanager.enable = true;
 
-  # Set your time zone.
-  time.timeZone = "Europe/London";
+  time.timeZone = "Europe/Oslo";
+  services.automatic-timezoned.enable = true;
+  services.geoclue2.enable = true;
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Select internationalisation properties.
   i18n.defaultLocale = "en_GB.UTF-8";
   console = {
-    #font = "Lat2-Terminus16";
-    #keyMap = "uk";
-    useXkbConfig = true; # use xkb.options in tty.
+    useXkbConfig = true;
   };
 
-  # Enable the X11 windowing system.
   services.xserver.enable = true;
   services.xserver.windowManager.awesome.enable = true;
   services.xserver.displayManager.startx.enable = true;
   services.xserver.wacom.enable = true;
+  services.xserver.xkb.options = "caps:super";
+  services.libinput.touchpad.naturalScrolling = true;
+
   services.getty.autologinUser = "ole";
 
-  # Configure keymap in X11
   services.xserver.xkb.layout = "gb";
-  # services.xserver.xkb.options = "eurosign:e,caps:escape";
 
-  # Enable CUPS to print documents.
-  # services.printing.enable = true;
-
-  # Enable sound.
   hardware.pulseaudio.enable = true;
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.ole = {
     isNormalUser = true;
-    extraGroups = [ "audio" "wheel" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "audio" "wheel" ];
     shell = pkgs.fish;
     packages = with pkgs; [
       firefox
@@ -124,8 +110,11 @@ efi /memtest86+/memtest.efi
 
   services.udev.packages = [ udevRules ];
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
+  fonts.packages = with pkgs; [
+    (nerdfonts.override { fonts = [ "FiraCode" ]; })
+    fira-code
+  ];
+
   environment.systemPackages = with pkgs; [
     alacritty
     neovim
@@ -157,6 +146,12 @@ efi /memtest86+/memtest.efi
     probe-rs
     godot_4
     inkscape
+    arc-icon-theme
+    acpi
+    brightnessctl
+    stremio
+    jujutsu
+    spotifyd
   ];
 
   programs.neovim = {
