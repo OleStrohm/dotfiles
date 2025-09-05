@@ -15,6 +15,11 @@ in {
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   networking.firewall.enable = false;
 
+  # For stremio
+  nixpkgs.config.permittedInsecurePackages = [
+    "qtwebengine-5.15.19"
+  ];
+
 #  hardware.fancontrol.enable = true;
 #  hardware.fancontrol.config = ''
 #INTERVAL=10
@@ -76,7 +81,7 @@ efi /memtest86+/memtest.efi
   networking.hostName = "deimos";
   networking.networkmanager.enable = true;
 
-  time.timeZone = "Europe/Oslo";
+  #time.timeZone = "Europe/Oslo";
   services.automatic-timezoned.enable = true;
   services.geoclue2.enable = true;
 
@@ -96,7 +101,7 @@ efi /memtest86+/memtest.efi
 
   services.xserver.xkb.layout = "gb";
 
-  hardware.pulseaudio.enable = true;
+  services.pipewire.enable = true;
 
   users.users.ole = {
     isNormalUser = true;
@@ -110,10 +115,10 @@ efi /memtest86+/memtest.efi
 
   services.udev.packages = [ udevRules ];
 
-  fonts.packages = with pkgs; [
-    (nerdfonts.override { fonts = [ "FiraCode" ]; })
-    fira-code
-  ];
+    #fonts.packages = with pkgs; [
+    #  (nerdfonts.override { fonts = [ "FiraCode" ]; })
+    #  fira-code
+    #];
 
   environment.systemPackages = with pkgs; [
     alacritty
@@ -151,7 +156,6 @@ efi /memtest86+/memtest.efi
     brightnessctl
     stremio
     jujutsu
-    spotifyd
   ];
 
   programs.neovim = {

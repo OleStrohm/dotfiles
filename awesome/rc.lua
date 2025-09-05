@@ -192,7 +192,7 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.fixed.horizontal,
             mykeyboardlayout,
             wibox.widget.systray(),
-            battery_widget,
+            battery_widget({ path_to_icons = "/nix/store/yaia152snjwimrs5vaimpad9l3fiyhqi-arc-icon-theme-20161122/share/icons/Arc/status/symbolic/", display_notification = true, show_current_level = true }),
             mytextclock,
             s.mylayoutbox,
         },
@@ -329,6 +329,12 @@ globalkeys = gears.table.join(
 		end, {}),
     awful.key({ },            "XF86AudioNext",     function ()
 			awful.util.spawn("playerctl --player=spotify next")
+		end, {}),
+    awful.key({ },            "XF86MonBrightnessUp",     function ()
+			awful.util.spawn("brightnessctl set +5%")
+		end, {}),
+    awful.key({ },            "XF86MonBrightnessDown",     function ()
+			awful.util.spawn("brightnessctl set 5%-")
 		end, {})
 )
 
@@ -514,6 +520,16 @@ client.connect_signal("manage", function (c)
         -- Prevent clients from being unreachable after screen count changes.
         awful.placement.no_offscreen(c)
     end
+
+    if c.name:find("^Stremio -") ~= nil then
+      awful.spawn("xdg-screensaver suspend " .. c.window)
+    end
+end)
+
+client.connect_signal("unmanage", function (c)
+  if c.name:find("^Stremio -") ~= nil then
+    awful.spawn("xdg-screensaver resume " .. c.window)
+  end
 end)
 
 -- Add a titlebar if titlebars_enabled is set to true in the rules.

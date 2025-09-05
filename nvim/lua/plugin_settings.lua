@@ -24,53 +24,53 @@ require("filetype").setup({
 })
 --- }}}
 -- Completion {{{
-local cmp = require'cmp'
-
-cmp.setup({
-  snippet = {
-    expand = function(args)
-      require('luasnip').lsp_expand(args.body)
-    end,
-  },
-  mapping = {
-    ['<Tab>'] = cmp.mapping.confirm({ select = true }),
-    ['<C-n>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
-    ['<C-p>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
-    ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
-    ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
-    ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
-    ['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
-    ['<C-e>'] = cmp.mapping({
-      i = cmp.mapping.abort(),
-      c = cmp.mapping.close(),
-    }),
-  },
-  sources = cmp.config.sources({
-    { name = 'nvim_lsp' },
-    { name = 'nvim_lua' },
-    { name = 'luasnip' },
-  }, {
-    { name = 'buffer' },
-  })
-})
-
--- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
-cmp.setup.cmdline('/', {
-  mapping = cmp.mapping.preset.cmdline(),
-  sources = {
-    { name = 'buffer' }
-  }
-})
-
--- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-cmp.setup.cmdline(':', {
-  mapping = cmp.mapping.preset.cmdline(),
-  sources = cmp.config.sources({
-    { name = 'path' }
-  }, {
-    { name = 'cmdline' }
-  })
-})
+--local cmp = require'cmp'
+--
+--cmp.setup({
+--  snippet = {
+--    expand = function(args)
+--      require('luasnip').lsp_expand(args.body)
+--    end,
+--  },
+--  mapping = {
+--    ['<Tab>'] = cmp.mapping.confirm({ select = true }),
+--    ['<C-n>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
+--    ['<C-p>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
+--    ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+--    ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+--    ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+--    ['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
+--    ['<C-e>'] = cmp.mapping({
+--      i = cmp.mapping.abort(),
+--      c = cmp.mapping.close(),
+--    }),
+--  },
+--  sources = cmp.config.sources({
+--    { name = 'nvim_lsp' },
+--    { name = 'nvim_lua' },
+--    { name = 'luasnip' },
+--  }, {
+--    { name = 'buffer' },
+--  })
+--})
+--
+---- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+--cmp.setup.cmdline('/', {
+--  mapping = cmp.mapping.preset.cmdline(),
+--  sources = {
+--    { name = 'buffer' }
+--  }
+--})
+--
+---- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+--cmp.setup.cmdline(':', {
+--  mapping = cmp.mapping.preset.cmdline(),
+--  sources = cmp.config.sources({
+--    { name = 'path' }
+--  }, {
+--    { name = 'cmdline' }
+--  })
+--})
 
 -- }}}
 -- Luasnips {{{
@@ -85,7 +85,15 @@ require'luasnip'.config.set_config {
 -- Set up neovim lua docs
 local nvim_lsp = require'lspconfig'
 
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+require'blink.cmp'.setup({
+  servers = {
+    rust_analyzer = {}
+  }
+})
+
+--local capabilities = require('cmp_nvim_lsp').default_capabilities()
+local capabilities = require('blink.cmp').get_lsp_capabilities(nil)
 local on_attach = function(--[[client, bufnr--]])
   -- lsp keymaps {{{
   local function map(mode, lhs, rhs, desc)
@@ -164,7 +172,7 @@ nvim_lsp.rust_analyzer.setup({
       --},
     }
   },
-  --cmd = { "/home/ole/src/rust-analyzer/target/debug/rust-analyzer" },
+  cmd = { "/home/ole/workspace/rust-analyzer/target/debug/rust-analyzer" },
 })
 
 require("neodev").setup({})

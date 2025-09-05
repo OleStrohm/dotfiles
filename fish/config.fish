@@ -6,39 +6,6 @@ set -Ux BROWSER "firefox"
 if status is-interactive
     fish_vi_key_bindings
 
-    abbr ls "lscat"
-    abbr cat "lscat"
-
-    function _lscat_file
-	    set path $argv
-	    command cat $path
-    end
-
-    function _lscat_dir
-        set path $argv
-	    eza -la $path
-    end
-
-    function lscat
-        if test -z $argv
-            _lscat_dir .
-        end
-
-        for path in $argv
-            if test -f $path
-   	    	    _lscat_file $path
-   	        else if test -d $path
-   	    	    _lscat_dir $path
-   	        else if test ! -e $path
-   	    	    echo "No such file or directory: $path"
-   	    	    return 1
-   	        else
-   	    	    echo "Unhandled case for: $path"
-   	    	    return 1
-   	        end
-   	    end
-    end
-
     if type -q direnv
         direnv hook fish | source
     end
@@ -46,14 +13,10 @@ if status is-interactive
         zoxide init fish | source
     end
 
-    alias v "nvim"
-    alias vim "nvim"
-    alias fishrc "nvim ~/.config/fish/config.fish"
-    alias awesomerc "nvim ~/.config/awesome/rc.lua"
-    alias picomrc "nvim ~/.config/picom/picom.conf"
+    alias v "nix run github:OleStrohm/dotfiles\?dir=nvim_config -- "
+    alias vim "v"
     alias x "startx"
     alias X "startx"
-    alias p "pacman"
     alias ezaa "eza -la --git"
     alias ezal "eza -l"
     if type -q eza
