@@ -29,6 +29,7 @@
             });
             fish = prev.runCommand "fish" {
               nativeBuildInputs = [ prev.makeWrapper ];
+              meta.shellPath = "/bin/fish";
             } ''
                 mkdir -p $out/bin
                 makeWrapper ${final.fish-unwrapped}/bin/fish $out/bin/fish --add-flag --config_dir=${./.} --prefix PATH ":" ${
