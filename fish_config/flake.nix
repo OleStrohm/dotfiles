@@ -43,6 +43,7 @@
 
               meta = {
                 description = "Custom wrapped fish shell";
+                mainProgram = "fish";
               };
               passthru = {
                 shellPath = "/bin/fish";
