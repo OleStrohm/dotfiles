@@ -10,6 +10,10 @@ in {
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
+  hardware.enableRedistributableFirmware = true;
+
   hardware.fancontrol.enable = true;
   hardware.fancontrol.config = ''
 INTERVAL=10
@@ -39,12 +43,12 @@ MINSTOP=hwmon0/pwm6=26 hwmon0/pwm3=26 hwmon0/pwm2=26
   users.users.root.initialHashedPassword = ""; # TODO: This can probably be removed
   users.users.root.shell = pkgs.fish;
 
-  boot.loader.systemd-boot.enable = lib.mkForce false;
+  boot.loader.systemd-boot.enable = true; #lib.mkForce false;
   boot.loader.efi.canTouchEfiVariables = false; # TODO: Set to true
-  boot.lanzaboote = {
-    enable = true;
-    pkiBundle = "/var/lib/sbctl/";
-  };
+  #boot.lanzaboote = {
+  #  enable = true;
+  #  pkiBundle = "/var/lib/sbctl/";
+  #};
   boot.loader.systemd-boot.extraEntries = {
     "arch.conf" = ''
 title arch
@@ -69,6 +73,11 @@ efi /memtest86+/memtest.efi
   networking.hostName = "mars";
   networking.networkmanager.enable = true;
   networking.networkmanager.wifi.powersave = false;
+  networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [ 22 80 443 5000 25565 ];
+    allowedUDPPorts = [ 25565 ];
+  };
 
   time.timeZone = "Europe/London";
 
@@ -107,16 +116,16 @@ efi /memtest86+/memtest.efi
           enable = true;
           primary = true;
           mode = "3440x1440";
-          position = "0x610";
+          position = "1440x610";
           rate = "239.99";
           crtc = 0;
         };
         "HDMI-1" = {
           enable = true;
           mode = "2560x1440";
-          position = "3440x0";
+          position = "0x0";
           rate = "59.95";
-          rotate = "left";
+          rotate = "right";
           crtc = 0;
         };
       };
