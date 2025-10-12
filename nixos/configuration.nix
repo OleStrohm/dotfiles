@@ -10,7 +10,21 @@ in {
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  nixpkgs.config.permittedInsecurePackages = [
+    "qtwebengine-5.15.19"
+  ];
+
+  boot.kernelPackages = pkgs.linuxPackages_testing;
+  boot.kernelParams = [
+    "pcie_aspm=off"
+    "cfg80211.ieee80211_regdom=GB"
+    "cfg80211.regulatory_ignore=1"
+  ];
+  boot.extraModprobeConfig = ''
+    options mt7925e disaple_aspm=1
+    options mt7925e power_save=0
+    options cfg80211 ieee80211_regdom="GB"
+  '';
 
   hardware.enableRedistributableFirmware = true;
 
@@ -43,12 +57,13 @@ MINSTOP=hwmon0/pwm6=26 hwmon0/pwm3=26 hwmon0/pwm2=26
   users.users.root.initialHashedPassword = ""; # TODO: This can probably be removed
   users.users.root.shell = pkgs.fish;
 
-  boot.loader.systemd-boot.enable = true; #lib.mkForce false;
+  boot.loader.systemd-boot.enable = lib.mkForce false;
   boot.loader.efi.canTouchEfiVariables = false; # TODO: Set to true
-  #boot.lanzaboote = {
-  #  enable = true;
-  #  pkiBundle = "/var/lib/sbctl/";
-  #};
+  boot.loader.timeout = 0;
+  boot.lanzaboote = {
+    enable = true;
+    pkiBundle = "/var/lib/sbctl/";
+  };
   boot.loader.systemd-boot.extraEntries = {
     "arch.conf" = ''
 title arch
