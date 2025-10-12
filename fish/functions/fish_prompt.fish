@@ -16,25 +16,16 @@ function fish_prompt
       end
     end
 
-    if not set -q __fish_git_prompt_color_branch
-        set -g __fish_git_prompt_color_branch brmagenta
-    end
-    if not set -q __fish_git_prompt_showdirtystate
-        set -g __fish_git_prompt_showdirtystate 1
-    end
-    set -g ___fish_git_prompt_color_dirtystate (set_color red)
-    set -g ___fish_git_prompt_color_dirtystate_done (set_color normal)
-    if not set -q __fish_git_prompt_color_stagedstate
-        set -g __fish_git_prompt_color_stagedstate yellow
-    end
-    if not set -q __fish_git_prompt_color_invalidstate
-        set -g __fish_git_prompt_color_invalidstate red
-    end
-    if not set -q __fish_git_prompt_color_cleanstate
-        set -g __fish_git_prompt_color_cleanstate brgreen
+    function jj_prompt
+      if not command -sq jj
+        return 1
+      end
+      if jj root > /dev/null 2> /dev/null
+        printf " %s(jj)%s" (set_color brmagenta) (set_color normal)
+      end
     end
 
-    printf "%s%s%s%s%s%s " (set_color $fish_color_cwd) (prompt_pwd) (set_color normal) (fish_git_prompt) (is_ssh) (nix_shell_info)
+    printf "%s%s%s%s%s%s " (set_color $fish_color_cwd) (prompt_pwd) (set_color normal) (jj_prompt) (is_ssh) (nix_shell_info)
 
     if not test $last_status -eq 0
       set_color $fish_color_error

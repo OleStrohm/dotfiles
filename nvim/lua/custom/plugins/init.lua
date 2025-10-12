@@ -4,7 +4,7 @@
 -- See the kickstart.nvim README for more information
 return {
   {
-    'olestrohm/cargo_test.nvim/',
+    'olestrohm/cargo_test.nvim',
     --dev = true,
     --name = 'lsp_test',
     --dir = '~/workspace/nvim/cargo_test.nvim/',

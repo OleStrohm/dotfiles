@@ -34,8 +34,6 @@
     # # the Nix store. Activating the configuration will then make '~/.screenrc' a
     # # symlink to the Nix store copy.
     # ".screenrc".source = dotfiles/screenrc;
-    ".config/nvim".source = ../nvim;
-    ".config/fish".source = ../fish;
     ".config/alacritty/alacritty.toml".source = ../alacritty.toml;
     ".config/awesome".source = ../awesome;
     ".config/hypr/hyprland.conf".source = ../hyprland.conf;

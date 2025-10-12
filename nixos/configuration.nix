@@ -171,7 +171,6 @@ efi /memtest86+/memtest.efi
     zoxide
     clang
     ripgrep
-    kitty
     wofi
     aseprite
     spotify
@@ -189,7 +188,7 @@ efi /memtest86+/memtest.efi
     probe-rs
     godot_4
     inkscape
-    stremio
+    #stremio
     delta
     jq
     playerctl

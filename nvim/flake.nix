@@ -7,12 +7,13 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixCats.url = "github:BirdeeHub/nixCats-nvim";
 
-    # neovim-nightly-overlay = {
-    #   url = "github:nix-community/neovim-nightly-overlay";
-    # };
+    neovim-nightly-overlay = {
+      url = "github:nix-community/neovim-nightly-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, nixCats, ... }@inputs: let
+  outputs = { nixpkgs, nixCats, neovim-nightly-overlay, ... }@inputs: let
     inherit (nixCats) utils;
     luaPath = ./.;
     forEachSystem = utils.eachSystem nixpkgs.lib.platforms.all;
@@ -98,13 +99,13 @@
     };
 
     packageDefinitions = {
-      nvim = { ... }: {
+      nvim = { pkgs, ... }: {
         settings = {
           suffix-path = true;
           suffix-LD = true;
           wrapRc = true;
           aliases = [ "vim" ];
-          # neovim-unwrapped = inputs.neovim-nightly-overlay.packages.${pkgs.system}.neovim;
+          #neovim-unwrapped = neovim-nightly-overlay.packages.${pkgs.system}.neovim;
           hosts.python3.enable = false;
           hosts.node.enable = false;
         };
@@ -117,7 +118,6 @@
 
     defaultPackageName = "nvim";
   in
-
 
   forEachSystem (system: let
     nixCatsBuilder = utils.baseBuilder luaPath {

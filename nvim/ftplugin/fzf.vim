@@ -1,1 +1,0 @@
-tnoremap <buffer> <esc> <esc>
