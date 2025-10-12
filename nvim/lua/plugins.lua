@@ -21,7 +21,7 @@ return require('packer').startup(function()
   use 'nvim-telescope/telescope-ui-select.nvim'
 
   use 'dstein64/vim-startuptime'
-  use 'nathom/filetype.nvim'
+  -- Now in nvim core: use 'nathom/filetype.nvim'
 
   -- nvim-lsp
   use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }

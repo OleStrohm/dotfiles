@@ -11,17 +11,17 @@ require'nvim-treesitter.configs'.setup {
 require'tree-sitter-just'.setup{}
 -- }}}
 -- Filetype {{{
-require("filetype").setup({
-  overrides = {
-    extensions = {
-      scm = "query",
-      fs = "fsharp",
-    },
-    literal = {
-      justfile = "just",
-    },
-  },
-})
+-- require("filetype").setup({
+--   overrides = {
+--     extensions = {
+--       scm = "query",
+--       fs = "fsharp",
+--     },
+--     literal = {
+--       justfile = "just",
+--     },
+--   },
+-- })
 --- }}}
 -- Completion {{{
 local cmp = require'cmp'
