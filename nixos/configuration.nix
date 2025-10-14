@@ -41,6 +41,9 @@ MINSTART=hwmon0/pwm6=66 hwmon0/pwm3=66 hwmon0/pwm2=66
 MINSTOP=hwmon0/pwm6=26 hwmon0/pwm3=26 hwmon0/pwm2=26
   '';
 
+  # To build for raspberry pi
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+
   nixpkgs.config.allowUnfree = true;
   programs.steam.enable = true;
   programs.noisetorch.enable = true;
@@ -92,6 +95,10 @@ efi /memtest86+/memtest.efi
     enable = true;
     allowedTCPPorts = [ 22 80 443 5000 25565 ];
     allowedUDPPorts = [ 25565 ];
+  };
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
   };
 
   time.timeZone = "Europe/London";
