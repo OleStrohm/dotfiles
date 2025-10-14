@@ -149,18 +149,13 @@ efi /memtest86+/memtest.efi
 
   services.udev.packages = [ udevRules ];
 
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true;
-  };
-
   fonts.packages = with pkgs; [
     nerd-fonts.fira-code
   ];
 
   environment.systemPackages = with pkgs; [
     alacritty
-    neovim
+    custom-neovim
     fish
     git
     dmenu

@@ -30,7 +30,7 @@
       system = "x86_64-linux";
       overlays = [
         fish-overlay.overlays.default
-        neovim.overlays.default
+        (final: prev: { custom-neovim = neovim.packages.x86_64-linux.default; })
         #(final: prev: { ftb-app = ftb-flake.packages.ftb-app.x86_64-linux; })
       ];
     in {
