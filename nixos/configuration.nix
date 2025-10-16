@@ -160,6 +160,9 @@ efi /memtest86+/memtest.efi
     nerd-fonts.fira-code
   ];
 
+  environment.variables.EDITOR = "nvim";
+  environment.variables.VISUAL = "nvim";
+
   environment.systemPackages = with pkgs; [
     alacritty
     custom-neovim
