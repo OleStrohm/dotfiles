@@ -49,6 +49,7 @@ MINSTOP=hwmon0/pwm6=26 hwmon0/pwm3=26 hwmon0/pwm2=26
   programs.noisetorch.enable = true;
 
   programs.fish.enable = true;
+  documentation.man.generateCaches = false;
   programs.direnv.enable = true;
   programs.hyprland = {
     enable = true;
@@ -198,6 +199,7 @@ efi /memtest86+/memtest.efi
     jq
     playerctl
     jujutsu
+    zellij
     #ftb-app
   ];
 

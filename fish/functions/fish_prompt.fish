@@ -11,7 +11,14 @@ function fish_prompt
       if test -z "$ORIG_SHLVL"
         set -gx ORIG_SHLVL $SHLVL
       end
-      if test "$SHLVL" -gt "$ORIG_SHLVL"
+
+      set -f ADJUSTED_ORIG_SHLVL $ORIG_SHLVL
+
+      if test -n "$ZELLIJ"
+        set -f ADJUSTED_ORIG_SHLVL (math $ADJUSTED_ORIG_SHLVL + 1)
+      end
+
+      if test "$SHLVL" -gt "$ADJUSTED_ORIG_SHLVL"
         printf " %s<nix shell>%s" (set_color cyan) (set_color normal)
       end
     end
